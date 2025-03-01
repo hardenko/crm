@@ -4,15 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 
 class Component extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
     protected $guarded = [];
-
-    public function products() {
-        return $this->belongsToMany(Product::class)->withPivot('quantity');
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'component_product')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 
 }

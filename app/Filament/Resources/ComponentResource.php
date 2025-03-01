@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ComponentResource\Pages;
-use App\Filament\Resources\ComponentResource\RelationManagers;
 use App\Models\Component;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -13,8 +12,6 @@ use Filament\Tables\Table;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ComponentResource extends Resource
 {
@@ -22,7 +19,7 @@ class ComponentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
@@ -33,7 +30,7 @@ class ComponentResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
@@ -41,9 +38,7 @@ class ComponentResource extends Resource
                 TextColumn::make('quantity_in_stock')->sortable(),
                 TextColumn::make('supplier')->sortable(),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])

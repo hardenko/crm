@@ -3,9 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
+use App\Filament\Resources\ProductResource\RelationManagers\ComponentRelationManager;
 use App\Models\Product;
-use App\Models\Component;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -13,16 +13,13 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Repeater;
-
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
@@ -38,24 +35,6 @@ class ProductResource extends Resource
                     ->required(),
                 TextInput::make('payer')->required(),
                 TextInput::make('receiver')->required(),
-
-                Repeater::make('components')
-                    ->relationship('components')
-                    ->schema([
-                        Select::make('component_id')
-                            ->label('Component')
-                            ->options(Component::all()->pluck('name', 'id'))
-                            ->required(),
-                        TextInput::make('quantity')
-                            ->numeric()
-                            ->required(),
-                    ])
-                    ->mutateRelationshipDataBeforeCreateUsing(function (array $data) {
-                        return ['quantity' => $data['quantity']];
-                    })
-                    ->mutateRelationshipDataBeforeFillUsing(function (array $data) {
-                        return ['quantity' => $data['quantity']];
-                    }),
             ]);
     }
 
@@ -70,9 +49,7 @@ class ProductResource extends Resource
                 TextColumn::make('payer')->sortable(),
                 TextColumn::make('receiver')->sortable(),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -86,7 +63,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ComponentRelationManager::class,
         ];
     }
 

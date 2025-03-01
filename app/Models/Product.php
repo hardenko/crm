@@ -4,14 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 
 class Product extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
+//    protected $fillable = ['name', 'type', 'price', 'payment_status', 'payer', 'receiver'];
     protected $guarded = [];
-
-    public function components() {
-        return $this->belongsToMany(Component::class)->withPivot('quantity');
+    public function components()
+    {
+        return $this->belongsToMany(Component::class, 'component_product')
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 }
