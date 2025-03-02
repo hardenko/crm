@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\PaymentStatusType;
 use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers\ComponentRelationManager;
 use App\Models\Product;
 use Filament\Forms;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,18 +25,44 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required(),
-                TextInput::make('type')->required(),
-                TextInput::make('price')->numeric()->required(),
-                Select::make('payment_status')
-                    ->options([
-                        'pending' => 'Pending',
-                        'completed' => 'Completed',
-                        'failed' => 'Failed',
-                    ])
+                TextInput::make('name')
+                    ->maxLength(255)
                     ->required(),
-                TextInput::make('payer')->required(),
-                TextInput::make('receiver')->required(),
+                TextInput::make('type')
+                    ->maxLength(255)
+                    ->required(),
+                TextInput::make('price')
+                    ->numeric()
+                    ->required(),
+                Select::make('payment_status')
+                    ->options(PaymentStatusType::options())
+                    ->default(PaymentStatusType::Pending)
+                    ->required(),
+                TextInput::make('payer')
+                    ->maxLength(255)
+                    ->required(),
+                TextInput::make('receiver')
+                    ->maxLength(255)
+                    ->required(),
+                Section::make('Components')
+                    ->schema([
+                        Repeater::make('components')
+                            ->label('Component')
+                            ->relationship('components')
+                            ->schema([
+                                Select::make('component_id')
+                                    ->label('Component Name')
+                                    ->relationship('components', 'name')
+                                    ->searchable()
+                                    ->required(),
+                                TextInput::make('quantity')
+                                    ->integer()
+                                    ->required(),
+                            ])
+                            ->hiddenLabel()
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(1),
             ]);
     }
 
@@ -49,7 +77,9 @@ class ProductResource extends Resource
                 TextColumn::make('payer')->sortable(),
                 TextColumn::make('receiver')->sortable(),
             ])
-            ->filters([])
+            ->filters([
+
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -58,13 +88,6 @@ class ProductResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            ComponentRelationManager::class,
-        ];
     }
 
     public static function getPages(): array

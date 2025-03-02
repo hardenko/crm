@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('type');
             $table->decimal('price', 10, 2);
-            $table->enum('payment_status', ['pending', 'completed', 'failed']);
+            $table->enum('payment_status', ['pending', 'completed', 'failed'])->default('pending');
             $table->string('payer');
             $table->string('receiver');
             $table->timestamps();
