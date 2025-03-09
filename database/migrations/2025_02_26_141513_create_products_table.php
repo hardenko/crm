@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PaymentStatusType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,9 +17,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('type');
             $table->decimal('price', 10, 2);
-            $table->enum('payment_status', ['pending', 'completed', 'failed'])->default('pending');
-            $table->string('payer');
-            $table->string('receiver');
+            $table->enum('payment_status', PaymentStatusType::values());
+            $table->string('payer'); // TODO
+            $table->string('receiver'); // TODO
             $table->timestamps();
         });
     }

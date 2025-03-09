@@ -10,7 +10,8 @@ class TotalComponents extends BaseWidget
     protected function getStats(): array
     {
         return [
-            BaseWidget\Stat::make('Total quantity of components', Component::count())
+            BaseWidget\Stat::make('total_components', Component::count())
+                ->label(__('filament/widgets.total_components.label'))
         ];
     }
 }

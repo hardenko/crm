@@ -15,7 +15,7 @@ enum PaymentStatusType: string
     {
         return match ($this) {
             self::Pending => 'Pending',
-            self::Completed => 'Completed',
+            self::Completed =>'Completed',
             self::Failed => 'Failed',
         };
     }

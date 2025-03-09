@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('components', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description');
-            $table->integer('quantity_in_stock');
+            $table->text('description')->nullable();
+            $table->integer('quantity_in_stock')->default(0);
             $table->string('supplier')->nullable();
             $table->timestamps();
         });

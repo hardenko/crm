@@ -17,16 +17,23 @@ class ComponentResource extends Resource
 {
     protected static ?string $model = Component::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
 
     public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
-                TextInput::make('name')->required(),
-                Textarea::make('description'),
-                TextInput::make('quantity_in_stock')->numeric()->required(),
-                TextInput::make('supplier'),
+                TextInput::make('name')
+                    ->label(__('filament/resources/component.fields.name.label'))
+                    ->required(),
+                Textarea::make('description')
+                    ->label(__('filament/resources/component.fields.description.label')),
+                TextInput::make('quantity_in_stock')
+                    ->label(__('filament/resources/component.fields.quantity_in_stock.label'))
+                    ->numeric()
+                    ->required(),
+                TextInput::make('supplier')
+                    ->label(__('filament/resources/component.fields.supplier.label')),
             ]);
     }
 
@@ -34,9 +41,19 @@ class ComponentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->sortable()->searchable(),
-                TextColumn::make('quantity_in_stock')->sortable(),
-                TextColumn::make('supplier')->sortable(),
+                TextColumn::make('name')
+                    ->label(__('filament/resources/component.fields.name.label'))
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('description')
+                    ->label(__('filament/resources/component.fields.description.label'))
+                    ->searchable(),
+                TextColumn::make('quantity_in_stock')
+                    ->label(__('filament/resources/component.fields.quantity_in_stock.label'))
+                    ->sortable(),
+                TextColumn::make('supplier')
+                    ->label(__('filament/resources/component.fields.supplier.label'))
+                    ->sortable(),
             ])
             ->filters([])
             ->actions([
@@ -49,13 +66,6 @@ class ComponentResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
@@ -63,5 +73,20 @@ class ComponentResource extends Resource
             'create' => Pages\CreateComponent::route('/create'),
             'edit' => Pages\EditComponent::route('/{record}/edit'),
         ];
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament/resources/component.plural_label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament/resources/component.label'); // Для однини
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament/resources/component.navigation_label');
     }
 }
