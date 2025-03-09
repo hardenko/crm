@@ -2,11 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Models\Client;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Component;
 use App\Models\Product;
+use Illuminate\Support\Facades\Schema;
+use Spatie\Permission\Models\Role;
 
 class LocalDatabaseSeeder extends Seeder
 {
@@ -15,10 +18,34 @@ class LocalDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
+        User::factory()->withRole('admin')->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'password',
+            'password' => bcrypt('password'),
+        ]);
+
+        User::factory()->withRole('manager')->create([
+            'name' => 'Test Manager',
+            'email' => 'testmanager@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        User::factory()->withRole('warehouse')->create([
+            'name' => 'Test Warehouse',
+            'email' => 'testwarehouse@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        Client::create([
+            'name' => 'Test Payer',
+            'phone' => '+380123456789',
+            'type' => 'payer',
+        ]);
+
+        Client::create([
+            'name' => 'Test Receiver',
+            'phone' => '+380123456798',
+            'type' => 'receiver',
         ]);
 
         $components = Component::factory(10)->create();

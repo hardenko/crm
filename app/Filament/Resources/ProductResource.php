@@ -142,7 +142,7 @@ class ProductResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('filament/resources/product.label'); // Для однини
+        return __('filament/resources/product.label');
     }
 
     public static function getNavigationLabel(): string
