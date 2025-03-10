@@ -16,6 +16,14 @@ return [
         ],
         'supplier' => [
             'label' => 'Постачальник',
-        ]
+        ],
+    ],
+    'columns' => [
+        'id' => [
+            'label' => 'ID',
+        ],
+        'created_at' => [
+            'label' => 'Створено',
+        ],
     ]
 ];

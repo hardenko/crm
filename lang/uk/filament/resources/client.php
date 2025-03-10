@@ -23,5 +23,13 @@ return [
         'type' => [
             'label' => 'Тип',
         ],
+    ],
+    'columns' => [
+        'id' => [
+            'label' => 'ID',
+        ],
+        'created_at' => [
+            'label' => 'Створено',
+        ],
     ]
 ];

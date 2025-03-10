@@ -80,7 +80,7 @@ class ProductResource extends Resource
                     ->label(__('filament/resources/product.columns.id.label'))
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->label(__('filament/resources/product.fields.name.label'))
                     ->sortable()
@@ -97,11 +97,6 @@ class ProductResource extends Resource
                 TextColumn::make('receiver')
                     ->label(__('filament/resources/product.fields.receiver.label'))
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->label(__('filament/resources/product.columns.created_at.label'))
-                    ->dateTime('d.m.Y H:i:s')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->sortable(),
                 TextColumn::make('payment_status')
                     ->label(__('filament/resources/product.fields.payment_status.label'))
                     ->sortable()
@@ -113,6 +108,11 @@ class ProductResource extends Resource
                         PaymentStatusType::Failed => 'danger',
                     })
                     ->toggleable(),
+                TextColumn::make('created_at')
+                    ->label(__('filament/resources/product.columns.created_at.label'))
+                    ->dateTime('d.m.Y H:i:s')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
             ])
             ->filters([
 

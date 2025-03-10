@@ -15,11 +15,11 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('phone', 13)->unique(); //TODO ?
+            $table->string('phone', 13)->unique();
             $table->string('comments')->nullable();
             $table->string('tax_id')->nullable();
             $table->string('bank_account')->nullable();
-            $table->enum('type', ClientType::values());
+            $table->enum('client_type', ClientType::values());
             $table->timestamps();
         });
 
