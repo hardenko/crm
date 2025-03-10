@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Enums\UserRoleType;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -31,19 +30,19 @@ class UserResource extends Resource
                 TextInput::make('email')
                     ->label(__('filament/resources/user.fields.email.label'))
                     ->email()
-                    ->unique(ignoreRecord: true) //TODO ?
+                    ->unique(ignoreRecord: true)
                     ->required(),
-                Select::make('role')
-                    ->label(__('filament/resources/user.fields.role.label'))
+                Select::make('user_role')
+                    ->label(__('filament/resources/user.fields.user_role.label'))
                     ->options(UserRoleType::options())
                     ->required(),
                 TextInput::make('password')
                     ->label(__('filament/resources/user.fields.password.label'))
                     ->password()
-                    ->required(fn ($context) => $context === 'create') //TODO ?
-                    ->dehydrated(fn ($state) => !empty($state)) //TODO ?
-                    ->hiddenOn('edit') //TODO ?
-                    ->formatStateUsing(fn ($state) => bcrypt($state)), //TODO ?
+                    ->required(fn ($context) => $context === 'create') //перевіряє контекст форми (create або edit)
+                    ->dehydrated(fn ($state) => !empty($state)) //керує тим, чи передавати значення поля у форму обробки (dehydration – видалення з форми при сабміті).
+                    ->hiddenOn('edit')
+                    ->formatStateUsing(fn ($state) => bcrypt($state)),
             ]);
     }
 
@@ -51,25 +50,36 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label(__('filament/resources/user.columns.id.label'))
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->label(__('filament/resources/user.fields.name.label'))
                     ->searchable(),
                 TextColumn::make('email')
                     ->label(__('filament/resources/user.fields.email.label'))
                     ->searchable(),
-                TextColumn::make('role')
-                    ->label(__('filament/resources/user.fields.role.label'))
+                TextColumn::make('user_role')
+                    ->label(__('filament/resources/user.fields.user_role.label'))
                     ->sortable()
-                    ->badge() //TODO?
-                    ->color(fn($state): string => match (UserRoleType::tryFrom($state)) {
+                    ->badge()
+                    ->formatStateUsing(fn($record) => $record->user_role->label())
+                    ->color(fn($record): string => match ($record->user_role) {
                         UserRoleType::Admin => 'yellow',
                         UserRoleType::Manager => 'success',
-                        UserRoleType::Warehouse => 'danger',
+                        UserRoleType::Wh_manager => 'danger',
                     }),
+                TextColumn::make('created_at')
+                    ->label(__('filament/resources/user.columns.created_at.label'))
+                    ->dateTime('d.m.Y H:i:s')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('role')
-                    ->label(__('filament/resources/user.fields.role.label'))
+                SelectFilter::make('user_role')
+                    ->label(__('filament/resources/user.fields.user_role.label'))
                     ->options(UserRoleType::options()),
             ])
             ->actions([

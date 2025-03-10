@@ -41,6 +41,11 @@ class ComponentResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label(__('filament/resources/component.columns.id.label'))
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->label(__('filament/resources/component.fields.name.label'))
                     ->sortable()
@@ -53,6 +58,11 @@ class ComponentResource extends Resource
                     ->sortable(),
                 TextColumn::make('supplier')
                     ->label(__('filament/resources/component.fields.supplier.label'))
+                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->label(__('filament/resources/component.columns.created_at.label'))
+                    ->dateTime('d.m.Y H:i:s')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
             ])
             ->filters([])

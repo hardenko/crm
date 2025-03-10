@@ -23,5 +23,13 @@ return [
         'type' => [
             'label' => 'Type',
         ],
+    ],
+    'columns' => [
+        'id' => [
+            'label' => 'ID',
+        ],
+        'created_at' => [
+            'label' => 'Created at',
+        ]
     ]
 ];

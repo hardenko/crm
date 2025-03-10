@@ -30,7 +30,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'role' => '',
+            'user_role' => '',
             'remember_token' => Str::random(10),
         ];
     }
@@ -38,7 +38,7 @@ class UserFactory extends Factory
     public function withRole(string $role): static
     {
         return $this->state(fn (array $attributes) => [
-            'role' => $role,
+            'user_role' => $role,
         ])->afterCreating(function (User $user) use ($role) {
             Role::firstOrCreate(['name' => $role]);
             $user->assignRole($role);

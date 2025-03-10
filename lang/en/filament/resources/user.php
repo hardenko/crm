@@ -11,11 +11,19 @@ return [
         'email' => [
             'label' => 'Email',
         ],
-        'role' => [
+        'user_role' => [
             'label' => 'Role',
         ],
         'password' => [
             'label' => 'Password',
         ],
+    ],
+    'columns' => [
+        'id' => [
+            'label' => 'ID',
+        ],
+        'created_at' => [
+            'label' => 'Created at',
+        ]
     ]
 ];

@@ -3,14 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Enums\ClientType;
-use App\Filament\Resources\ClientResource\Pages;
-use App\Filament\Resources\ClientResource\RelationManagers;
 use App\Models\Client;
-use Filament\Forms;
+use App\Filament\Resources\ClientResource\Pages;
+use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -31,7 +29,10 @@ class ClientResource extends Resource
                     ->required(),
                 TextInput::make('phone')
                     ->label(__('filament/resources/client.fields.phone.label'))
-                    ->required(),
+                    ->default('+380')
+                    ->length(13)
+                    ->required()
+                    ->rules(['regex:/^\+38\d{3}\d{7}$/']),
                 TextInput::make('tax_id')
                     ->label(__('filament/resources/client.fields.tax_id.label'))
                     ->maxLength(255)
@@ -44,7 +45,7 @@ class ClientResource extends Resource
                     ->label(__('filament/resources/client.fields.comments.label'))
                     ->maxLength(255)
                     ->nullable(),
-                Select::make('type')
+                Select::make('client_type')
                     ->label(__('filament/resources/client.fields.type.label'))
                     ->options(ClientType::options())
                     ->required(),
@@ -55,6 +56,11 @@ class ClientResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label(__('filament/resources/client.columns.id.label'))
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->label(__('filament/resources/client.fields.name.label'))
                     ->searchable(),
@@ -65,12 +71,12 @@ class ClientResource extends Resource
                     ->label(__('filament/resources/client.fields.tax_id.label'))
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('type')
+                TextColumn::make('client_type')
                     ->label(__('filament/resources/client.fields.type.label'))
                     ->sortable()
                     ->badge()
-                    ->formatStateUsing(fn($state) => ClientType::tryFrom($state)?->label() ?? $state)
-                    ->color(fn($state): string => match (ClientType::tryFrom($state)) {
+                    ->formatStateUsing(fn($record) => $record->client_type->label())
+                    ->color(fn($record): string => match ($record->client_type) {
                         ClientType::Payer => 'yellow',
                         ClientType::Receiver => 'success',
                     }),
@@ -82,9 +88,14 @@ class ClientResource extends Resource
                     ->label(__('filament/resources/client.fields.comments.label'))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
+                TextColumn::make('created_at')
+                    ->label(__('filament/resources/client.columns.created_at.label'))
+                    ->dateTime('d.m.Y H:i:s')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('type')
+                SelectFilter::make('client_type')
                     ->label(__('filament/resources/client.fields.type.label'))
                     ->options(ClientType::options()),
             ])
@@ -122,7 +133,7 @@ class ClientResource extends Resource
         return __('filament/resources/client.navigation_label');
     }
 
-    public static function getNavigationGroup(): string //TODO ?
+    public static function getNavigationGroup(): string
     {
         return __('filament/navigation.admin_panel_label');
     }
