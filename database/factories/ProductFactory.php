@@ -13,10 +13,7 @@ class ProductFactory extends Factory
         return [
             'name' => $this->faker->word(),
             'type' => $this->faker->word(),
-            'price'=> $this->faker->numberBetween(1,1000),
-            'payment_status' => $this->faker->randomElement(['pending', 'completed', 'failed']),
-            'payer' => $this->faker->name(),
-            'receiver' => $this->faker->name()
+            'price'=> $this->faker->numberBetween(1,100000),
         ];
     }
 }

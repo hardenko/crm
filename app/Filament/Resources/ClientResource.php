@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ClientLegalForm;
 use App\Enums\ClientType;
 use App\Models\Client;
 use App\Filament\Resources\ClientResource\Pages;
@@ -33,10 +34,10 @@ class ClientResource extends Resource
                     ->length(13)
                     ->required()
                     ->rules(['regex:/^\+38\d{3}\d{7}$/']),
-                TextInput::make('tax_id')
-                    ->label(__('filament/resources/client.fields.tax_id.label'))
-                    ->maxLength(255)
-                    ->nullable(),
+                Select::make('legal_form')
+                    ->label(__('filament/resources/client.fields.legal_form.label'))
+                    ->options(ClientLegalForm::options())
+                    ->required(),
                 TextInput::make('bank_account')
                     ->label(__('filament/resources/client.fields.bank_account.label'))
                     ->maxLength(255)
@@ -67,8 +68,8 @@ class ClientResource extends Resource
                 TextColumn::make('phone')
                     ->label(__('filament/resources/client.fields.phone.label'))
                     ->searchable(),
-                TextColumn::make('tax_id')
-                    ->label(__('filament/resources/client.fields.tax_id.label'))
+                TextColumn::make('legal_form')
+                    ->label(__('filament/resources/client.fields.legal_form.label'))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('client_type')
@@ -79,6 +80,7 @@ class ClientResource extends Resource
                     ->color(fn($record): string => match ($record->client_type) {
                         ClientType::Payer => 'yellow',
                         ClientType::Receiver => 'success',
+                        ClientType::Supplier => 'info',
                     }),
                 TextColumn::make('bank_account')
                     ->label(__('filament/resources/client.fields.bank_account.label'))
@@ -86,7 +88,6 @@ class ClientResource extends Resource
                     ->searchable(),
                 TextColumn::make('comments')
                     ->label(__('filament/resources/client.fields.comments.label'))
-                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->label(__('filament/resources/client.columns.created_at.label'))

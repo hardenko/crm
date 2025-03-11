@@ -89,14 +89,16 @@ class ComponentResource extends Resource
     {
         return __('filament/resources/component.plural_label');
     }
-
     public static function getModelLabel(): string
     {
         return __('filament/resources/component.label'); // Для однини
     }
-
     public static function getNavigationLabel(): string
     {
         return __('filament/resources/component.navigation_label');
+    }
+    public static function getNavigationGroup(): string
+    {
+        return __('filament/navigation.admin_panel_label');
     }
 }

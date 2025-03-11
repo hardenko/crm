@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\PaymentStatusType;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
 use Filament\Forms;
@@ -36,19 +35,6 @@ class ProductResource extends Resource
                 TextInput::make('price')
                     ->label(__('filament/resources/product.fields.price.label'))
                     ->numeric()
-                    ->required(),
-                Select::make('payment_status')
-                    ->label(__('filament/resources/product.fields.payment_status.label'))
-                    ->options(PaymentStatusType::options())
-                    ->default(PaymentStatusType::Pending)
-                    ->required(),
-                TextInput::make('payer')
-                    ->label(__('filament/resources/product.fields.payer.label'))
-                    ->maxLength(255)
-                    ->required(),
-                TextInput::make('receiver')
-                    ->label(__('filament/resources/product.fields.receiver.label'))
-                    ->maxLength(255)
                     ->required(),
                 Section::make(__('filament/resources/product.section_label'))
                     ->schema([
@@ -91,23 +77,6 @@ class ProductResource extends Resource
                 TextColumn::make('price')
                     ->label(__('filament/resources/product.fields.price.label'))
                     ->sortable(),
-                TextColumn::make('payer')
-                    ->label(__('filament/resources/product.fields.payer.label'))
-                    ->sortable(),
-                TextColumn::make('receiver')
-                    ->label(__('filament/resources/product.fields.receiver.label'))
-                    ->sortable(),
-                TextColumn::make('payment_status')
-                    ->label(__('filament/resources/product.fields.payment_status.label'))
-                    ->sortable()
-                    ->badge()
-                    ->formatStateUsing(fn($record) => $record->payment_status->label())
-                    ->color(fn($record): string => match ($record->payment_status) {
-                        PaymentStatusType::Pending => 'yellow',
-                        PaymentStatusType::Completed => 'success',
-                        PaymentStatusType::Failed => 'danger',
-                    })
-                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label(__('filament/resources/product.columns.created_at.label'))
                     ->dateTime('d.m.Y H:i:s')
@@ -139,14 +108,16 @@ class ProductResource extends Resource
     {
         return __('filament/resources/product.plural_label');
     }
-
     public static function getModelLabel(): string
     {
         return __('filament/resources/product.label');
     }
-
     public static function getNavigationLabel(): string
     {
         return __('filament/resources/product.navigation_label');
+    }
+    public static function getNavigationGroup(): string
+    {
+        return __('filament/navigation.admin_panel_label');
     }
 }

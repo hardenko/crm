@@ -17,9 +17,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('type');
             $table->decimal('price', 10, 2);
-            $table->enum('payment_status', PaymentStatusType::values());
-            $table->string('payer'); // TODO
-            $table->string('receiver'); // TODO
             $table->timestamps();
         });
     }
