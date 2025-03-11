@@ -23,4 +23,9 @@ class Component extends Model
     {
         return $this->hasMany(ProductComponent::class, 'component_id', 'id');
     }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Client::class, 'supplier_id')->where('client_type', 'supplier');
+    }
 }

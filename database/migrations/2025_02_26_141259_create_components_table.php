@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->integer('quantity_in_stock')->default(0);
-            $table->string('supplier')->nullable();
+            $table->foreignId('supplier_id')->constrained('clients', 'id')->nullOnDelete();
             $table->timestamps();
         });
     }
