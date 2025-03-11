@@ -3,8 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ComponentResource\Pages;
+use App\Models\Client;
 use App\Models\Component;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -28,12 +30,11 @@ class ComponentResource extends Resource
                     ->required(),
                 Textarea::make('description')
                     ->label(__('filament/resources/component.fields.description.label')),
-                TextInput::make('quantity_in_stock')
-                    ->label(__('filament/resources/component.fields.quantity_in_stock.label'))
-                    ->numeric()
-                    ->required(),
-                TextInput::make('supplier')
-                    ->label(__('filament/resources/component.fields.supplier.label')),
+                Select::make('supplier_id')
+                    ->label(__('filament/resources/component.fields.supplier.label'))
+                    ->options(Client::where('client_type', 'supplier')->pluck('name', 'id'))
+                    ->searchable()
+                    ->nullable(),
             ]);
     }
 
@@ -53,10 +54,7 @@ class ComponentResource extends Resource
                 TextColumn::make('description')
                     ->label(__('filament/resources/component.fields.description.label'))
                     ->searchable(),
-                TextColumn::make('quantity_in_stock')
-                    ->label(__('filament/resources/component.fields.quantity_in_stock.label'))
-                    ->sortable(),
-                TextColumn::make('supplier')
+                TextColumn::make('supplier.name')
                     ->label(__('filament/resources/component.fields.supplier.label'))
                     ->sortable(),
                 TextColumn::make('created_at')

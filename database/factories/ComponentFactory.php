@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Client;
 use App\Models\Component;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,8 +14,7 @@ class ComponentFactory extends Factory
         return [
             'name' => $this->faker->word(),
             'description' => $this->faker->sentence(),
-            'quantity_in_stock' => $this->faker->numberBetween(1, 10),
-            'supplier' => $this->faker->word()
+            'supplier_id' => Client::where('client_type', 'supplier')->inRandomOrder()->first()?->id,
         ];
     }
 }
