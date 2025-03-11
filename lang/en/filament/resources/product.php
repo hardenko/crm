@@ -14,15 +14,6 @@ return [
         'price' => [
             'label' => 'Price',
         ],
-        'payment_status' => [
-            'label' => 'Payment Status',
-        ],
-        'payer' => [
-            'label' => 'Payer',
-        ],
-        'receiver' => [
-            'label' => 'Receiver',
-        ]
     ],
     'section_label' => 'Components',
     'section_button' => 'Product',

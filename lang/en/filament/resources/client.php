@@ -11,8 +11,8 @@ return [
         'phone' => [
             'label' => 'Phone',
         ],
-        'tax_id' => [
-            'label' => 'Tax Info',
+        'legal_form' => [
+            'label' => 'Legal Form',
         ],
         'bank_account' => [
             'label' => 'Bank Account',

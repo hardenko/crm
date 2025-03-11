@@ -11,7 +11,7 @@ return [
         'phone' => [
             'label' => 'Телефон',
         ],
-        'tax_id' => [
+        'legal_form' => [
             'label' => 'Юридична форма',
         ],
         'bank_account' => [

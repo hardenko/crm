@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ClientLegalForm;
 use App\Enums\ClientType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ class Client extends Model
     {
         return [
             'client_type' => ClientType::class,
+            'legal_form' => ClientLegalForm::class,
         ];
     }
 

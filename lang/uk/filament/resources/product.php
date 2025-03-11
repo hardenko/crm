@@ -14,15 +14,6 @@ return [
         'price' => [
             'label' => 'Ціна',
         ],
-        'payment_status' => [
-            'label' => 'Статус оплати',
-        ],
-        'payer' => [
-            'label' => 'Платник',
-        ],
-        'receiver' => [
-            'label' => 'Отримувач',
-        ]
     ],
     'section_label' => 'Компоненти',
     'section_button' => 'Продукти',

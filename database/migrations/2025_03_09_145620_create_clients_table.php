@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone', 13)->unique();
             $table->string('comments')->nullable();
-            $table->string('tax_id')->nullable();
+            $table->string('legal_form')->nullable();
             $table->string('bank_account')->nullable();
             $table->enum('client_type', ClientType::values());
             $table->timestamps();
