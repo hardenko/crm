@@ -8,6 +8,8 @@ use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\WarehouseItem;
+use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -32,19 +34,31 @@ class OrderResource extends Resource
                     ->searchable()
                     ->required()
                     ->live()
-                    ->afterStateUpdated(fn ($state, callable $set) =>
-                    $set('total_price', Product::find($state)?->price ?? 0)
+                    ->afterStateUpdated(fn($state, callable $set) => $set('total_price', Product::find($state)?->price ?? 0)
                     ),
                 TextInput::make('quantity')
                     ->numeric()
                     ->default(1)
                     ->minValue(1)
-                    ->maxValue(99)
                     ->required()
-                    ->live()
-                    ->afterStateUpdated(fn ($state, callable $set, callable $get) =>
-                    $set('total_price', $state * (Product::find($get('product_id'))?->price ?? 0))
-                    ),
+                    ->reactive()
+                    ->afterStateUpdated(fn($state, callable $set, callable $get) => $set('total_price', $state * (Product::find($get('product_id'))?->price ?? 0))
+                    )
+                    ->rule(function (callable $get) {
+                        return function (string $attribute, $value, Closure $fail) use ($get) {
+                            $product = Product::with('belongsToManyComponents')->find($get('product_id'));
+                            if (!$product) return;
+
+                            foreach ($product->belongsToManyComponents as $component) {
+                                $neededQuantity = $component->pivot->quantity * $value;
+                                $warehouseItem = WarehouseItem::where('component_id', $component->id)->first();
+
+                                if (!$warehouseItem || $warehouseItem->quantity < $neededQuantity) {
+                                    $fail("Not enough stock for component: {$component->name}. Required: {$neededQuantity}, Available: " . ($warehouseItem->quantity ?? 0));
+                                }
+                            }
+                        };
+                    }),
                 TextInput::make('total_price')
                     ->disabled()
                     ->required(),
@@ -71,6 +85,23 @@ class OrderResource extends Resource
                 TextInput::make('comments')
                     ->nullable(),
             ]);
+    }
+
+    public static function mutateFormDataBeforeCreate(array $data): array
+    {
+        return self::calculateTotalPrice($data);
+    }
+
+    public static function mutateFormDataBeforeSave(array $data): array
+    {
+        return self::calculateTotalPrice($data);
+    }
+
+    private static function calculateTotalPrice(array $data): array
+    {
+        $product = Product::find($data['product_id'] ?? null);
+        $data['total_price'] = ($data['quantity'] ?? 1) * ($product?->price ?? 0);
+        return $data;
     }
 
     public static function table(Table $table): Table

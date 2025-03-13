@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('comments')->nullable();
             $table->string('legal_form')->nullable();
             $table->string('bank_account')->nullable();
-            $table->enum('client_type', ClientType::values());
+            $table->enum('client_type', ClientType::values())->nullable();
             $table->timestamps();
         });
 
