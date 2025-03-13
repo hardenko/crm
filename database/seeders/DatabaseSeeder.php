@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Component;
-use App\Models\WarehouseItem;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
 
@@ -19,17 +17,9 @@ class DatabaseSeeder extends Seeder
             $this->call(ClientSeeder::class);
             $this->call(ComponentSeeder::class);
             $this->call(ProductSeeder::class);
-
-            $components = Component::all(); //TODO
-
-            foreach ($components as $component) {
-                WarehouseItem::firstOrCreate([
-                    'component_id' => $component->id,
-                ], [
-                    'quantity' => 0
-                ]);
-            }
+            $this->call(WarehouseSeeder::class);
+            $this->call(StockMovementSeeder::class);
+            $this->call(OrderSeeder::class);
         }
     }
-
 }

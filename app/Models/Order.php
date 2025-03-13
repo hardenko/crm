@@ -4,8 +4,10 @@ namespace App\Models;
 
 use App\Enums\OrderStatusType;
 use App\Enums\PaymentStatusType;
+use App\Enums\StockMovementType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -15,12 +17,15 @@ class Order extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'payment_status' => PaymentStatusType::class,
-        'order_status' => OrderStatusType::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'payment_status' => PaymentStatusType::class,
+            'order_status' => OrderStatusType::class,
+        ];
+    }
 
-    public static function boot()
+    public static function boot(): void
     {
         parent::boot();
 
@@ -34,10 +39,10 @@ class Order extends Model
 
             foreach ($product->belongsToManyComponents as $component) {
                 $neededQuantity = $component->pivot->quantity * $order->quantity;
-                $warehouseItem = WarehouseItem::where('component_id', $component->id)->first();
+                $warehouseItem = Warehouse::where('component_id', $component->id)->first();
 
                 if (!$warehouseItem || $warehouseItem->quantity < $neededQuantity) {
-                    throw new Exception("Not enough stock for component: {$component->name}. Required: {$neededQuantity}, Available: " . ($warehouseItem->quantity ?? 0));
+                    throw new Exception("Not enough stock for component: $component->name. Required: $neededQuantity, Available: " . ($warehouseItem->quantity ?? 0));
                 }
             }
         });
@@ -52,25 +57,20 @@ class Order extends Model
                     StockMovement::create([
                         'component_id' => $component->id,
                         'quantity' => $neededQuantity,
-                        'type' => 'outgoing',
-                        'comments' => "Auto deduction for order #{$order->id}"
+                        'type' => StockMovementType::Outgoing->value,
+                        'comments' => "Auto deduction for order #$order->id"
                     ]);
-
-                    WarehouseItem::where('component_id', $component->id)
-                        ->update([
-                            'quantity' => DB::raw("GREATEST(quantity - {$neededQuantity}, 0)")
-                        ]);
                 }
             });
         });
     }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function payer()
+    public function payer(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'payer_id');
     }

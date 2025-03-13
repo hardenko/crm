@@ -12,8 +12,8 @@ class ClientSeeder extends Seeder
      */
     public function run(): void
     {
-        Client::factory()->withFixedPayer()->create();
-        Client::factory()->withFixedReceiver()->create();
+        Client::factory()->withFixedPayer()->count(10)->create();
+        Client::factory()->withFixedReceiver()->count(10)->create();
         Client::factory()->count(5)->create();
     }
 }

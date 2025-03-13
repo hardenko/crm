@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class WarehouseItem extends Model
+class Warehouse extends Model
 {
     use HasFactory;
 
@@ -13,7 +14,7 @@ class WarehouseItem extends Model
     protected $guarded = ['id'];
     public $timestamps = false;
 
-    public function component()
+    public function component(): BelongsTo
     {
         return $this->belongsTo(Component::class);
     }

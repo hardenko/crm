@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\StockMovementType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
 class StockMovement extends Model
 {
@@ -12,38 +16,48 @@ class StockMovement extends Model
     protected $table = 'stock_movements';
     protected $guarded = ['id'];
 
-    public function component()
+    protected function casts(): array
+    {
+        return [
+            'type' => StockMovementType::class,
+        ];
+    }
+
+    public function component(): BelongsTo
     {
         return $this->belongsTo(Component::class);
     }
 
-    public function supplier()
+    public function supplier(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'supplier_id');
     }
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
         static::creating(function ($movement) {
-            if ($movement->type === 'outgoing') {
-                $warehouseItem = WarehouseItem::where('component_id', $movement->component_id)->first();
-
-                if (!$warehouseItem || $warehouseItem->quantity < $movement->quantity) {
-                    throw new \Exception("Not enough stock available. Available: " . ($warehouseItem->quantity ?? 0));
-                }
+            $warehouseItem = Warehouse::where('component_id', $movement->component_id)->first();
+            if (!$warehouseItem) {
+                throw new Exception("Component '{$movement->component->name}' is not available in warehouse.");
             }
         });
 
         static::created(function ($movement) {
-            $warehouseItem = WarehouseItem::firstOrCreate(['component_id' => $movement->component_id]);
+            DB::transaction(function () use ($movement) {
+                $warehouseItem = Warehouse::where('component_id', $movement->component_id)->lockForUpdate()->first();
 
-            if ($movement->type === 'incoming') {
-                $warehouseItem->increment('quantity', $movement->quantity);
-            } elseif ($movement->type === 'outgoing') {
-                $warehouseItem->decrement('quantity', $movement->quantity);
-            }
+                if (!$warehouseItem) {
+                    throw new Exception("Critical error: Component '{$movement->component->name}' not found in warehouse.");
+                }
+
+                if ($movement->type->isIncoming()) {
+                    $warehouseItem->increment('quantity', $movement->quantity);
+                } elseif ($movement->type->isOutgoing()) {
+                    $warehouseItem->decrement('quantity', $movement->quantity);
+                }
+            });
         });
     }
 }
