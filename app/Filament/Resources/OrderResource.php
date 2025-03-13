@@ -8,7 +8,7 @@ use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\WarehouseItem;
+use App\Models\Warehouse;
 use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -29,7 +29,7 @@ class OrderResource extends Resource
         return $form
             ->schema([
                 Select::make('product_id')
-                    ->label('Product')
+                    ->label(__('filament/resources/order.fields.product_id.label'))
                     ->options(Product::pluck('name', 'id'))
                     ->searchable()
                     ->required()
@@ -37,6 +37,7 @@ class OrderResource extends Resource
                     ->afterStateUpdated(fn($state, callable $set) => $set('total_price', Product::find($state)?->price ?? 0)
                     ),
                 TextInput::make('quantity')
+                    ->label(__('filament/resources/order.fields.quantity.label'))
                     ->numeric()
                     ->default(1)
                     ->minValue(1)
@@ -51,7 +52,7 @@ class OrderResource extends Resource
 
                             foreach ($product->belongsToManyComponents as $component) {
                                 $neededQuantity = $component->pivot->quantity * $value;
-                                $warehouseItem = WarehouseItem::where('component_id', $component->id)->first();
+                                $warehouseItem = Warehouse::where('component_id', $component->id)->first();
 
                                 if (!$warehouseItem || $warehouseItem->quantity < $neededQuantity) {
                                     $fail("Not enough stock for component: {$component->name}. Required: {$neededQuantity}, Available: " . ($warehouseItem->quantity ?? 0));
@@ -60,29 +61,31 @@ class OrderResource extends Resource
                         };
                     }),
                 TextInput::make('total_price')
+                    ->label(__('filament/resources/order.fields.total_price.label'))
                     ->disabled()
                     ->required(),
                 Select::make('payer_id')
-                    ->label('Payer')
+                    ->label(__('filament/resources/order.fields.payer_id.label'))
                     ->options(Client::where('client_type', 'payer')->pluck('name', 'id'))
                     ->searchable()
                     ->required(),
                 Select::make('receiver_id')
-                    ->label('Receiver')
+                    ->label(__('filament/resources/order.fields.receiver_id.label'))
                     ->options(Client::where('client_type', 'receiver')->pluck('name', 'id'))
                     ->searchable()
                     ->required(),
                 Select::make('payment_status')
-                    ->label('Payment Status')
+                    ->label(__('filament/resources/order.fields.payment_status.label'))
                     ->options(PaymentStatusType::options())
                     ->default(PaymentStatusType::Pending)
                     ->required(),
                 Select::make('order_status')
-                    ->label('Order Status')
+                    ->label(__('filament/resources/order.fields.order_status.label'))
                     ->options(OrderStatusType::options())
                     ->default(OrderStatusType::Pending)
                     ->required(),
                 TextInput::make('comments')
+                    ->label(__('filament/resources/order.fields.comments.label'))
                     ->nullable(),
             ]);
     }
@@ -109,22 +112,36 @@ class OrderResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')
+                    ->label(__('filament/resources/order.columns.id.label'))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('product.name')
-                    ->label('Product')
+                    ->label(__('filament/resources/order.fields.product_id.label'))
                     ->sortable(),
                 TextColumn::make('order_status')
+                    ->label(__('filament/resources/order.fields.order_status.label'))
                     ->badge()
+                    ->formatStateUsing(fn($record) => $record->order_status->label())
+                    ->color(fn($record): string => match ($record->order_status)
+                    {
+                        OrderStatusType::Pending => 'yellow',
+                        OrderStatusType::Processing => 'success',
+                        OrderStatusType::Shipped => 'zinc',
+                        OrderStatusType::Delivered => 'sky',
+                        OrderStatusType::Cancelled => 'danger',
+                    })
                     ->sortable(),
                 TextColumn::make('quantity')
+                    ->label(__('filament/resources/order.fields.quantity.label'))
                     ->sortable(),
                 TextColumn::make('total_price')
+                    ->label(__('filament/resources/order.fields.total_price.label'))
                     ->sortable(),
                 TextColumn::make('payer.name')
-                    ->label('Payer')
+                    ->label(__('filament/resources/order.fields.payer_id.label'))
                     ->sortable(),
                 TextColumn::make('payment_status')
+                    ->label(__('filament/resources/order.fields.payment_status.label'))
                     ->badge()
                     ->formatStateUsing(fn($record) => $record->payment_status->label())
                     ->color(fn($record): string => match ($record->payment_status) {
@@ -134,9 +151,10 @@ class OrderResource extends Resource
                     })
                     ->sortable(),
                 TextColumn::make('receiver.name')
-                    ->label('Receiver')
+                    ->label(__('filament/resources/order.fields.receiver_id.label'))
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label(__('filament/resources/order.columns.created_at.label'))
                     ->dateTime('d.m.Y H:i:s')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -166,5 +184,18 @@ class OrderResource extends Resource
             'create' => Pages\CreateOrder::route('/create'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament/resources/order.plural_label');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('filament/resources/order.label');
+    }
+    public static function getNavigationLabel(): string
+    {
+        return __('filament/resources/order.navigation_label');
     }
 }

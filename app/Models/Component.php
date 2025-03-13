@@ -34,7 +34,7 @@ class Component extends Model
 
     public function warehouseItem(): HasOne
     {
-        return $this->hasOne(WarehouseItem::class, 'component_id');
+        return $this->hasOne(Warehouse::class, 'component_id');
     }
 
     protected static function boot()
@@ -42,7 +42,7 @@ class Component extends Model
         parent::boot();
 
         static::created(function ($component) {
-            WarehouseItem::create([
+            Warehouse::create([
                 'component_id' => $component->id,
                 'quantity' => 0,
             ]);

@@ -16,13 +16,13 @@ class ProductSeeder extends Seeder
         $products = Product::factory(5)->create();
 
         foreach ($products as $product) {
-            $randomComponents = $components->random(rand(2, 5));
+            $randomComponents = $components->random(3);
 
             foreach ($randomComponents as $component) {
                 DB::table('component_product')->insert([
                     'product_id' => $product->id,
                     'component_id' => $component->id,
-                    'quantity' => rand(1, 10),
+                    'quantity' => rand(1, 3),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
