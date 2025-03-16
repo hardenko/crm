@@ -24,18 +24,21 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label(__('filament/resources/product.fields.name.label'))
-                    ->maxLength(255)
-                    ->required(),
-                TextInput::make('type')
-                    ->label(__('filament/resources/product.fields.type.label'))
-                    ->maxLength(255)
-                    ->required(),
-                TextInput::make('price')
-                    ->label(__('filament/resources/product.fields.price.label'))
-                    ->numeric()
-                    ->required(),
+                Section::make('')
+                    ->schema([
+                        TextInput::make('name')
+                            ->label(__('filament/resources/product.fields.name.label'))
+                            ->maxLength(255)
+                            ->required(),
+                        TextInput::make('type')
+                            ->label(__('filament/resources/product.fields.type.label'))
+                            ->maxLength(255)
+                            ->required(),
+                        TextInput::make('price')
+                            ->label(__('filament/resources/product.fields.price.label'))
+                            ->numeric()
+                            ->required(),
+                    ])->columns(3),
                 Section::make(__('filament/resources/product.section_label'))
                     ->schema([
                         Repeater::make('components')
@@ -58,6 +61,7 @@ class ProductResource extends Resource
                     ->columns(1),
             ]);
     }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -70,13 +74,16 @@ class ProductResource extends Resource
                 TextColumn::make('name')
                     ->label(__('filament/resources/product.fields.name.label'))
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('type')
                     ->label(__('filament/resources/product.fields.type.label'))
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('price')
                     ->label(__('filament/resources/product.fields.price.label'))
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label(__('filament/resources/product.columns.created_at.label'))
                     ->dateTime('d.m.Y H:i:s')
@@ -95,6 +102,7 @@ class ProductResource extends Resource
                 ]),
             ]);
     }
+
     public static function getPages(): array
     {
         return [
@@ -108,14 +116,17 @@ class ProductResource extends Resource
     {
         return __('filament/resources/product.plural_label');
     }
+
     public static function getModelLabel(): string
     {
         return __('filament/resources/product.label');
     }
+
     public static function getNavigationLabel(): string
     {
         return __('filament/resources/product.navigation_label');
     }
+
     public static function getNavigationGroup(): string
     {
         return __('filament/navigation.admin_panel_label');

@@ -16,7 +16,7 @@ enum UserRoleType: string
         return match ($this) {
             self::Admin => 'Admin',
             self::Manager =>'Manager',
-            self::Wh_manager => 'Wh_manager',
+            self::Wh_manager => 'Wh manager',
         };
     }
 }

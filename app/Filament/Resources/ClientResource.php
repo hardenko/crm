@@ -6,6 +6,8 @@ use App\Enums\ClientLegalForm;
 use App\Enums\ClientType;
 use App\Models\Client;
 use App\Filament\Resources\ClientResource\Pages;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -24,32 +26,45 @@ class ClientResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label(__('filament/resources/client.fields.name.label'))
-                    ->maxLength(255)
-                    ->required(),
-                TextInput::make('phone')
-                    ->label(__('filament/resources/client.fields.phone.label'))
-                    ->default('+380')
-                    ->length(13)
-                    ->required()
-                    ->rules(['regex:/^\+38\d{3}\d{7}$/']),
-                Select::make('legal_form')
-                    ->label(__('filament/resources/client.fields.legal_form.label'))
-                    ->options(ClientLegalForm::options())
-                    ->required(),
-                TextInput::make('bank_account')
-                    ->label(__('filament/resources/client.fields.bank_account.label'))
-                    ->maxLength(255)
-                    ->nullable(),
-                TextInput::make('comments')
-                    ->label(__('filament/resources/client.fields.comments.label'))
-                    ->maxLength(255)
-                    ->nullable(),
-                Select::make('client_type')
-                    ->label(__('filament/resources/client.fields.type.label'))
-                    ->options(ClientType::options())
-                    ->required(),
+                Section::make('')
+                    ->schema([
+                        TextInput::make('name')
+                            ->label(__('filament/resources/client.fields.name.label'))
+                            ->maxLength(255)
+                            ->required(),
+                        TextInput::make('phone')
+                            ->label(__('filament/resources/client.fields.phone.label'))
+                            ->default('+380')
+                            ->length(13)
+                            ->required()
+                            ->rules(['regex:/^\+38\d{3}\d{7}$/']),
+                    ])->columns(),
+                Section::make('')
+                    ->schema([
+                        Select::make('client_type')
+                            ->label(__('filament/resources/client.fields.type.label'))
+                            ->options(ClientType::options())
+                            ->required(),
+                        Select::make('legal_form')
+                            ->label(__('filament/resources/client.fields.legal_form.label'))
+                            ->options(ClientLegalForm::options())
+                            ->required(),
+                    ])->columns(),
+                Section::make('')
+                    ->schema([
+                        Textarea::make('bank_account')
+                            ->label(__('filament/resources/client.fields.bank_account.label'))
+                            ->maxLength(255)
+                            ->nullable(),
+                    ])->columnSpanFull(),
+                Section::make('')
+                    ->schema([
+                        Textarea::make('comments')
+                            ->label(__('filament/resources/client.fields.comments.label'))
+                            ->maxLength(255)
+                            ->nullable(),
+                    ])->columnSpanFull(),
+
             ]);
     }
 
@@ -64,14 +79,17 @@ class ClientResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->label(__('filament/resources/client.fields.name.label'))
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('phone')
                     ->label(__('filament/resources/client.fields.phone.label'))
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('legal_form')
                     ->label(__('filament/resources/client.fields.legal_form.label'))
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('client_type')
                     ->label(__('filament/resources/client.fields.type.label'))
                     ->sortable()
@@ -81,14 +99,16 @@ class ClientResource extends Resource
                         ClientType::Payer => 'yellow',
                         ClientType::Receiver => 'success',
                         ClientType::Supplier => 'info',
-                    }),
+                    })
+                    ->toggleable(),
                 TextColumn::make('bank_account')
                     ->label(__('filament/resources/client.fields.bank_account.label'))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('comments')
                     ->label(__('filament/resources/client.fields.comments.label'))
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label(__('filament/resources/client.columns.created_at.label'))
                     ->dateTime('d.m.Y H:i:s')
@@ -116,6 +136,7 @@ class ClientResource extends Resource
             'index' => Pages\ListClients::route('/'),
             'create' => Pages\CreateClient::route('/create'),
             'edit' => Pages\EditClient::route('/{record}/edit'),
+            'view' => Pages\ViewClient::route('/{record}'),
         ];
     }
 

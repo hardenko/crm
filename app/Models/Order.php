@@ -15,6 +15,7 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected $table = 'orders';
     protected $guarded = ['id'];
 
     protected function casts(): array
@@ -75,7 +76,7 @@ class Order extends Model
         return $this->belongsTo(Client::class, 'payer_id');
     }
 
-    public function receiver()
+    public function receiver(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'receiver_id');
     }
