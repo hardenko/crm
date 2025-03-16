@@ -4,6 +4,11 @@ return [
     'label' => 'Order',
     'plural_label' => 'Orders',
     'navigation_label' => 'Orders',
+    'section_name' => [
+        'order_details' => 'Order Details',
+        'payment_details' => 'Payment Details',
+        'additional_details' => 'Additional Details',
+    ],
     'fields' => [
         'product_id' => [
             'label' => 'Product',
@@ -36,6 +41,25 @@ return [
         ],
         'created_at' => [
             'label' => 'Created at',
+        ]
+    ],
+    'infolist' => [
+        'section_name' => [
+            'component_list' => 'Component List',
+        ],
+        'fields' => [
+            'component_name' => [
+                'label' => 'Component Name',
+            ],
+            'product_price' => [
+                'label' => 'Product Price',
+            ],
+            'component_description' => [
+                'label' => 'Component Description',
+            ],
+            'quantity' => [
+                'label' => 'Quantity',
+            ]
         ]
     ]
 ];

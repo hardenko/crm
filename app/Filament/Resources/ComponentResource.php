@@ -28,13 +28,14 @@ class ComponentResource extends Resource
                 TextInput::make('name')
                     ->label(__('filament/resources/component.fields.name.label'))
                     ->required(),
-                Textarea::make('description')
-                    ->label(__('filament/resources/component.fields.description.label')),
                 Select::make('supplier_id')
                     ->label(__('filament/resources/component.fields.supplier.label'))
                     ->options(Client::where('client_type', 'supplier')->pluck('name', 'id'))
                     ->searchable()
                     ->nullable(),
+                Textarea::make('description')
+                    ->label(__('filament/resources/component.fields.description.label'))
+                ->columnSpanFull(),
             ]);
     }
 
@@ -50,13 +51,16 @@ class ComponentResource extends Resource
                 TextColumn::make('name')
                     ->label(__('filament/resources/component.fields.name.label'))
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('description')
                     ->label(__('filament/resources/component.fields.description.label'))
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('supplier.name')
                     ->label(__('filament/resources/component.fields.supplier.label'))
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label(__('filament/resources/component.columns.created_at.label'))
                     ->dateTime('d.m.Y H:i:s')

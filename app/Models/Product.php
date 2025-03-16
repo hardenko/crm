@@ -11,7 +11,9 @@ class Product extends Model
 {
     use HasFactory;
 
+    protected $table = 'products';
     protected $guarded = ['id'];
+
 
     public function belongsToManyComponents(): BelongsToMany
     {

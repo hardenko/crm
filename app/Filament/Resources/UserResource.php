@@ -52,15 +52,16 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->label(__('filament/resources/user.columns.id.label'))
-                    ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->label(__('filament/resources/user.fields.name.label'))
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('email')
                     ->label(__('filament/resources/user.fields.email.label'))
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('user_role')
                     ->label(__('filament/resources/user.fields.user_role.label'))
                     ->sortable()
@@ -70,7 +71,8 @@ class UserResource extends Resource
                         UserRoleType::Admin => 'yellow',
                         UserRoleType::Manager => 'success',
                         UserRoleType::Wh_manager => 'danger',
-                    }),
+                    })
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label(__('filament/resources/user.columns.created_at.label'))
                     ->dateTime('d.m.Y H:i:s')
