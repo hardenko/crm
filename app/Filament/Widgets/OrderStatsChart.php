@@ -69,4 +69,8 @@ final class OrderStatsChart extends ChartWidget
             default => [now()->startOfWeek(), now()->endOfWeek(), 'perDay'],
         };
     }
+    public static function canView(): bool
+    {
+        return auth()->user()->can('view dashboard') ?? false;
+    }
 }

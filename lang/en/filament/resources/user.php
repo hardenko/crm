@@ -11,7 +11,7 @@ return [
         'email' => [
             'label' => 'Email',
         ],
-        'user_role' => [
+        'roles' => [
             'label' => 'Role',
         ],
         'password' => [

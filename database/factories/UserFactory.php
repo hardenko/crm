@@ -30,21 +30,9 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'user_role' => '',
             'remember_token' => Str::random(10),
         ];
     }
-
-    public function withRole(string $role): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'user_role' => $role,
-        ])->afterCreating(function (User $user) use ($role) {
-            Role::firstOrCreate(['name' => $role]);
-            $user->assignRole($role);
-        });
-    }
-
     /**
      * Indicate that the model's email address should be unverified.
      */

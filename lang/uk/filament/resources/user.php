@@ -14,7 +14,7 @@ return [
         'email' => [
             'label' => 'Пошта',
         ],
-        'user_role' => [
+        'roles' => [
             'label' => 'Роль',
         ],
         'password' => [

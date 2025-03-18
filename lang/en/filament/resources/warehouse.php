@@ -5,7 +5,7 @@ return [
     'plural_label' => 'Warehouse',
     'navigation_label' => 'Warehouse',
     'columns' => [
-        'component.name' => [
+        'component_name' => [
             'label' => 'Component',
         ],
         'quantity' => [

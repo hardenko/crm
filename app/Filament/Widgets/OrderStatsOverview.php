@@ -3,7 +3,6 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\OrderStatusType;
-use App\Filament\Resources\OrderResource;
 use App\Models\Order;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -56,5 +55,10 @@ final class OrderStatsOverview extends BaseWidget
                 ->url(route('filament.admin.resources.orders.index', ['tableFilters' => ['order_status' => ['value' => OrderStatusType::Cancelled->value]]])),
 
         ];
+    }
+
+    public static function canView(): bool
+    {
+        return auth()->user()->can('view dashboard') ?? false;
     }
 }

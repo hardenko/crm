@@ -159,4 +159,24 @@ class ClientResource extends Resource
     {
         return __('filament/navigation.admin_panel_label');
     }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view client');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create client');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->can('edit client');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->can('delete client');
+    }
 }

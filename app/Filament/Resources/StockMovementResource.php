@@ -173,4 +173,19 @@ class StockMovementResource extends Resource
     {
         return __('filament/resources/stock_movement.navigation_label');
     }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view stock_movements');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create stock_movements');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->can('delete stock_movements');
+    }
 }
