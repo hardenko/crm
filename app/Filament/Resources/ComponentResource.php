@@ -103,4 +103,24 @@ class ComponentResource extends Resource
     {
         return __('filament/navigation.admin_panel_label');
     }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view components');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create components');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->can('edit components');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->can('delete components');
+    }
 }

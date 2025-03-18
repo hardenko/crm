@@ -56,4 +56,9 @@ class WarehouseResource extends Resource
     {
         return __('filament/resources/warehouse.navigation_label');
     }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view warehouse');
+    }
 }

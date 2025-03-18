@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\UserRoleType;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use Filament\Forms\Components\Select;
@@ -11,7 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class UserResource extends Resource
@@ -32,10 +30,6 @@ class UserResource extends Resource
                     ->email()
                     ->unique(ignoreRecord: true)
                     ->required(),
-                Select::make('user_role')
-                    ->label(__('filament/resources/user.fields.user_role.label'))
-                    ->options(UserRoleType::options())
-                    ->required(),
                 TextInput::make('password')
                     ->label(__('filament/resources/user.fields.password.label'))
                     ->password()
@@ -43,6 +37,11 @@ class UserResource extends Resource
                     ->dehydrated(fn ($state) => !empty($state)) //керує тим, чи передавати значення поля у форму обробки (dehydration – видалення з форми при сабміті).
                     ->hiddenOn('edit')
                     ->formatStateUsing(fn ($state) => bcrypt($state)),
+                Select::make('roles')
+                    ->label(__('filament/resources/user.fields.roles.label'))
+                    ->relationship('roles', 'name')
+                    ->preload()
+                    ->searchable(),
             ]);
     }
 
@@ -62,16 +61,9 @@ class UserResource extends Resource
                     ->label(__('filament/resources/user.fields.email.label'))
                     ->searchable()
                     ->toggleable(),
-                TextColumn::make('user_role')
-                    ->label(__('filament/resources/user.fields.user_role.label'))
+                TextColumn::make('roles.name')
+                    ->label(__('filament/resources/user.fields.roles.label'))
                     ->sortable()
-                    ->badge()
-                    ->formatStateUsing(fn($record) => $record->user_role->label())
-                    ->color(fn($record): string => match ($record->user_role) {
-                        UserRoleType::Admin => 'yellow',
-                        UserRoleType::Manager => 'success',
-                        UserRoleType::Wh_manager => 'danger',
-                    })
                     ->toggleable(),
                 TextColumn::make('created_at')
                     ->label(__('filament/resources/user.columns.created_at.label'))
@@ -80,26 +72,15 @@ class UserResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('user_role')
-                    ->label(__('filament/resources/user.fields.user_role.label'))
-                    ->options(UserRoleType::options()),
+
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->visible(fn ($record) => auth()->user()->can('edit users')),
+                Tables\Actions\DeleteAction::make()->visible(fn ($record) => auth()->user()->can('delete users')),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make()->visible(fn () => auth()->user()->can('delete users')),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array
@@ -129,5 +110,25 @@ class UserResource extends Resource
     public static function getNavigationGroup(): string
     {
         return __('filament/navigation.admin_panel_label');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view users');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create users');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->can('edit users');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->can('delete users');
     }
 }
