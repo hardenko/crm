@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -12,7 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class UserResource extends Resource
+class UserResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-c-user';
@@ -114,21 +115,30 @@ class UserResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can('view users');
+        return auth()->user()->can('view_any_user');
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can('create users');
+        return auth()->user()->can('create_user');
     }
 
     public static function canEdit($record): bool
     {
-        return auth()->user()->can('edit users');
+        return auth()->user()->can('update_user');
     }
-
     public static function canDelete($record): bool
     {
-        return auth()->user()->can('delete users');
+        return auth()->user()->can('delete_user');
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view_any',
+            'create',
+            'update',
+            'delete',
+        ];
     }
 }

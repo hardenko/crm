@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -15,7 +16,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 
-class ProductResource extends Resource
+class ProductResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Product::class;
     protected static ?string $navigationIcon = 'heroicon-c-rocket-launch';
@@ -134,21 +135,37 @@ class ProductResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can('view products');
+        return auth()->user()->can('view_any_product');
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can('create products');
+        return auth()->user()->can('create_product');
     }
 
     public static function canEdit($record): bool
     {
-        return auth()->user()->can('edit products');
+        return auth()->user()->can('update_product');
     }
 
     public static function canDelete($record): bool
     {
-        return auth()->user()->can('delete products');
+        return auth()->user()->can('delete_product');
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()->can('delete_any_product');
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
     }
 }

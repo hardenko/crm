@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Warehouse;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -25,7 +26,7 @@ use Filament\Tables\Table;
 use Filament\Forms\Components\Section;
 use Filament\Infolists\Components\Section as InfolistSection;
 
-class OrderResource extends Resource
+class OrderResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Order::class;
 
@@ -309,21 +310,36 @@ class OrderResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can('view orders');
+        return auth()->user()->can('view_any_order');
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can('create orders');
+        return auth()->user()->can('create_order');
     }
 
     public static function canEdit($record): bool
     {
-        return auth()->user()->can('edit orders');
+        return auth()->user()->can('update_order');
     }
 
     public static function canDelete($record): bool
     {
-        return auth()->user()->can('delete orders');
+        return auth()->user()->can('delete_order');
+    }
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()->can('delete_any_order');
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
     }
 }

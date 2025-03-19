@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\Component;
 use App\Models\StockMovement;
 use App\Models\Warehouse;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -19,7 +20,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-class StockMovementResource extends Resource
+class StockMovementResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = StockMovement::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -154,11 +155,6 @@ class StockMovementResource extends Resource
         ];
     }
 
-    public static function canEdit(Model $record): bool
-    {
-        return false;
-    }
-
     public static function getPluralModelLabel(): string
     {
         return __('filament/resources/stock_movement.plural_label');
@@ -173,19 +169,29 @@ class StockMovementResource extends Resource
     {
         return __('filament/resources/stock_movement.navigation_label');
     }
-
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
+    public static function canEdit(Model $record): bool
+    {
+        return false;
+    }
     public static function canViewAny(): bool
     {
-        return auth()->user()->can('view stock_movements');
+        return auth()->user()->can('view_any_stock::movement');
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can('create stock_movements');
+        return auth()->user()->can('create_stock::movement');
     }
 
-    public static function canDelete($record): bool
+    public static function getPermissionPrefixes(): array
     {
-        return auth()->user()->can('delete stock_movements');
+        return [
+            'view_any',
+            'create'
+        ];
     }
 }
