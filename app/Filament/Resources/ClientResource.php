@@ -6,6 +6,7 @@ use App\Enums\ClientLegalForm;
 use App\Enums\ClientType;
 use App\Models\Client;
 use App\Filament\Resources\ClientResource\Pages;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Resource;
@@ -17,7 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
-class ClientResource extends Resource
+class ClientResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Client::class;
     protected static ?string $navigationIcon = 'heroicon-c-banknotes';
@@ -162,21 +163,37 @@ class ClientResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can('view client');
+        return auth()->user()->can('view_any_client');
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can('create client');
+        return auth()->user()->can('create_client');
     }
 
     public static function canEdit($record): bool
     {
-        return auth()->user()->can('edit client');
+        return auth()->user()->can('update_client');
     }
 
     public static function canDelete($record): bool
     {
-        return auth()->user()->can('delete client');
+        return auth()->user()->can('delete_client');
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()->can('delete_any_client');
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
     }
 }

@@ -4,12 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\WarehouseResource\Pages;
 use App\Models\Warehouse;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-class WarehouseResource extends Resource
+class WarehouseResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Warehouse::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -35,6 +36,15 @@ class WarehouseResource extends Resource
             'index' => Pages\ListWarehouses::route('/'),
         ];
     }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament/resources/warehouse.plural_label');
+    }
+    public static function getNavigationLabel(): string
+    {
+        return __('filament/resources/warehouse.navigation_label');
+    }
     public static function canCreate(): bool
     {
         return false;
@@ -47,18 +57,14 @@ class WarehouseResource extends Resource
     {
         return false;
     }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __('filament/resources/warehouse.plural_label');
-    }
-    public static function getNavigationLabel(): string
-    {
-        return __('filament/resources/warehouse.navigation_label');
-    }
-
     public static function canViewAny(): bool
     {
-        return auth()->user()->can('view warehouse');
+        return auth()->user()?->can('view_any_warehouse') ?? false;
+    }
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view_any',
+        ];
     }
 }

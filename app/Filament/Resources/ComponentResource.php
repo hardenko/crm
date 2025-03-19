@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ComponentResource\Pages;
 use App\Models\Client;
 use App\Models\Component;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -15,7 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 
-class ComponentResource extends Resource
+class ComponentResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Component::class;
 
@@ -106,21 +107,36 @@ class ComponentResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can('view components');
+        return auth()->user()->can('view_any_component');
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can('create components');
+        return auth()->user()->can('create_component');
     }
 
     public static function canEdit($record): bool
     {
-        return auth()->user()->can('edit components');
+        return auth()->user()->can('update_component');
     }
 
     public static function canDelete($record): bool
     {
-        return auth()->user()->can('delete components');
+        return auth()->user()->can('delete_component');
+    }
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()->can('delete_any_component');
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any'
+        ];
     }
 }
