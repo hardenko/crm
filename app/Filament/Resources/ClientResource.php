@@ -88,6 +88,7 @@ class ClientResource extends Resource implements HasShieldPermissions
                     ->toggleable(),
                 TextColumn::make('legal_form')
                     ->label(__('filament/resources/client.fields.legal_form.label'))
+                    ->formatStateUsing(fn($record) => $record->legal_form->label())
                     ->sortable()
                     ->searchable()
                     ->toggleable(),

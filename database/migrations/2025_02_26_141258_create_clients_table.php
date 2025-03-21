@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ClientLegalForm;
 use App\Enums\ClientType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone', 13)->unique();
             $table->string('comments')->nullable();
-            $table->string('legal_form')->nullable();
+            $table->enum('legal_form', ClientLegalForm::values())->nullable();
             $table->string('bank_account')->nullable();
             $table->enum('client_type', ClientType::values())->nullable();
             $table->timestamps();

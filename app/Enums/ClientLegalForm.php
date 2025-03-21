@@ -7,12 +7,12 @@ use App\Traits\EnumToArray;
 enum ClientLegalForm: string
 {
     use EnumToArray;
-    case Individual = 'Individual';
-    case SP = 'Sole proprietor (SP)';
-    case PE = 'Private Enterprise (PE)';
-    case LLC = 'Limited Liability Company (LLC)';
-    case NGO = 'Non-Governmental Organization (NGO)';
-    case Charitable_Foundation = 'Charitable Foundation';
+    case Individual = 'individual';
+    case SP = 'sp';
+    case PE = 'pe';
+    case LLC = 'llc';
+    case NGO = 'ngo';
+    case charitableFoundation = 'charitable_foundation';
 
     public function label(): string
     {
@@ -22,7 +22,7 @@ enum ClientLegalForm: string
             self::PE =>'Private Enterprise (PE)',
             self::LLC =>'Limited Liability Company (LLC)',
             self::NGO =>'Non-Governmental Organization (NGO)',
-            self::Charitable_Foundation =>'Charitable Foundation',
+            self::charitableFoundation =>'Charitable Foundation',
         };
     }
 }

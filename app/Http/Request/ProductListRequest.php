@@ -4,7 +4,7 @@ namespace App\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class ComponentListRequest extends FormRequest
+final class ProductListRequest extends FormRequest
 {
     public function rules(): array
     {
@@ -14,10 +14,10 @@ final class ComponentListRequest extends FormRequest
                 'string',
                 'max:255',
             ],
-            'supplier_id' => [
+            'price' => [
                 'bail',
-                'integer',
-                'exists:components,supplier_id',
+                'numeric',
+                'min:0',
             ],
         ];
     }

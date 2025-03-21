@@ -2,18 +2,18 @@
 
 namespace App\Dto;
 
-final class GetComponentListDto extends BaseDto
+final class GetProductListDto extends BaseDto
 {
     public function __construct(
         public ?string $name,
-        public int $supplier_id,
+        public ?float $price,
     ){}
 
     public static function fromArray(array $params): self
     {
         return new self(
             name: $params['name'] ?? null,
-            supplier_id: $params['supplier_id'] ?? 0,
+            price: $params['price'] ?? null,
         );
     }
 }
