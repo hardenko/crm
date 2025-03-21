@@ -12,9 +12,11 @@ final class ComponentListResource extends JsonResource
             'component_id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'quantity' => $this->quantity_in_stock,
-            'supplier' => $this->supplier,
-            'created' => $this->created_at,
+            'supplier_id' => $this->supplier_id,
+            'quantity' => $this->whenPivotLoaded('component_product', function () {
+                return $this->pivot->quantity;
+            }),
+            'created' => $this->created_at->toDateTimeString(),
         ];
     }
 }

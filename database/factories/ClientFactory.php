@@ -32,7 +32,7 @@ class ClientFactory extends Factory
                 ClientLegalForm::PE,
                 ClientLegalForm::LLC,
                 ClientLegalForm::NGO,
-                ClientLegalForm::Charitable_Foundation,
+                ClientLegalForm::charitableFoundation,
             ])->value,
         ]);
     }

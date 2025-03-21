@@ -2,53 +2,24 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Product;
-use Illuminate\Http\Request;
+use App\Dto\GetProductListDto;
+use App\Http\Controllers\BaseApiController;
+use App\Http\Request\ProductListRequest;
+use App\Interfaces\ProductListServiceInterface;
+use App\Resources\ProductListResource;
+use Illuminate\Http\JsonResponse;
 
-class ProductController extends Controller
+class ProductController extends BaseApiController
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(private readonly ProductListServiceInterface $service)
     {
-        return response()->json(Product::with('components')->get());
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function getProductList(ProductListRequest $request): JsonResponse
     {
-        //
-    }
+        $response = $this->service->getProductList(GetProductListDto::fromArray($request->all()));
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $product = Product::with('components')->find($id);
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
-        }
-        return response()->json($product);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return $this->response('successfully_got_product_list', ProductListResource::collection($response));
     }
 }

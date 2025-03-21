@@ -28,5 +28,23 @@ class ProductSeeder extends Seeder
                 ]);
             }
         }
+
+        $productTest = Product::factory()->create([
+                'name' => 'Test Product',
+                'price' => '10000.00'
+            ]
+        );
+
+        $randomComponents = $components->random(3);
+
+        foreach ($randomComponents as $component) {
+            DB::table('component_product')->insert([
+                'product_id' => $productTest->id,
+                'component_id' => $component->id,
+                'quantity' => rand(1, 3),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

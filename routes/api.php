@@ -1,18 +1,16 @@
 <?php
 
+use App\Http\Controllers\Api\ClientController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ComponentController;
 use App\Http\Controllers\Api\ProductController;
 
-//TODO
 Route::get('component-list', [ComponentController::class, 'getComponentList']);
+Route::get('product-list', [ProductController::class, 'getProductList']);
+Route::get('user-list', [UserController::class, 'getUserList']);
+Route::get('client-list', [ClientController::class, 'getClientList']);
 
+//TODO Post methods
+//TODO Authorization
 
-
-
-
-
-Route::get('/components/{id}', [ComponentController::class, 'show']);
-
-Route::get('/products', [ProductController::class, 'index']);
-Route::get('/products/{id}', [ProductController::class, 'show']);

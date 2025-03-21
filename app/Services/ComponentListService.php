@@ -7,7 +7,7 @@ use App\Interfaces\ComponentListServiceInterface;
 use App\Models\Component;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-final readonly class ComponentListService implements ComponentListServiceInterface
+final readonly class ComponentListService extends SearchQueryService implements ComponentListServiceInterface
 {
     private const ITEMS_PER_PAGE = 20;
 
@@ -15,13 +15,8 @@ final readonly class ComponentListService implements ComponentListServiceInterfa
     {
         $query = Component::query();
 
-        if (!empty($dto->supplier)) {
-            $query->where('supplier', $dto->supplier);
-        }
-
-        if ($dto->quantity) {
-            $query->where('quantity_in_stock', '>', 0);
-        }
+        $this->applyWhere(query: $query, field: 'name', value: $dto->name, operator: 'LIKE', wildcard: true);
+        $this->applyWhere(query: $query, field: 'supplier_id', value: $dto->supplier_id);
 
         return $query->paginate(self::ITEMS_PER_PAGE);
     }

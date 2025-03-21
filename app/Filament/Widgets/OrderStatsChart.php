@@ -71,6 +71,6 @@ final class OrderStatsChart extends ChartWidget
     }
     public static function canView(): bool
     {
-        return auth()->user()->can('view dashboard') ?? false;
+        return auth()->user()->can('widget_OrderStatsChart') ?? false;
     }
 }
