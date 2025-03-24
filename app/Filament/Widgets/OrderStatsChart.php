@@ -9,7 +9,7 @@ use Flowframe\Trend\TrendValue;
 
 final class OrderStatsChart extends ChartWidget
 {
-    protected static ?string $heading = 'Order Statistics';
+    protected static ?string $heading = null;
     protected static string $color = 'Primary';
     protected static ?int $sort = 1;
 
@@ -33,18 +33,23 @@ final class OrderStatsChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Orders',
+                    'label' => __('filament/widgets.order_stats_chart.datasets.orders.label'),
                     'data' => $orders->map(fn(TrendValue $value) => $value->aggregate),
                     'backgroundColor' => 'rgba(54, 162, 235, 0.5)',
                 ],
                 [
-                    'label' => 'Revenue',
+                    'label' => __('filament/widgets.order_stats_chart.datasets.revenue.label'),
                     'data' => $revenue->map(fn(TrendValue $value) => $value->aggregate),
                     'backgroundColor' => 'rgba(75, 192, 192, 0.5)',
                 ],
             ],
             'labels' => $orders->map(fn(TrendValue $value) => $value->date),
         ];
+    }
+
+    public function getHeading(): ?string
+    {
+        return __('filament/widgets.order_stats_chart.label');
     }
 
     protected function getType(): string
@@ -55,9 +60,9 @@ final class OrderStatsChart extends ChartWidget
     protected function getFilters(): ?array
     {
         return [
-            'week' => 'This week',
-            'month' => 'This month',
-            'year' => 'This year',
+            'week' => __('filament/widgets.order_stats_chart.filters.week'),
+            'month' => __('filament/widgets.order_stats_chart.filters.month'),
+            'year' => __('filament/widgets.order_stats_chart.filters.year'),
         ];
     }
 

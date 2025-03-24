@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(StartSession::class); // Запуск сесії
-        $middleware->append(SetLocale::class);    // Middleware для локалізації
+        $middleware->append(SetLocale::class);// Middleware для локалізації
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
