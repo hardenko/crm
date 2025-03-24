@@ -11,6 +11,7 @@ Route::get('product-list', [ProductController::class, 'getProductList']);
 Route::get('user-list', [UserController::class, 'getUserList']);
 Route::get('client-list', [ClientController::class, 'getClientList']);
 
-//TODO Post methods
-//TODO Authorization
+Route::middleware(['permission:add component'])->group(function () {
+    Route::post('component', [ComponentController::class, 'addComponent']);
+});
 

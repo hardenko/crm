@@ -14,8 +14,8 @@ class FilamentServiceProvider extends ServiceProvider
         Filament::serving(function () {
             Filament::registerUserMenuItems([
                 MenuItem::make()
-                    ->label(__('Change Language'))
-                    ->icon('heroicon-o-language')
+                    ->label(__('filament/navigation.change_language'))
+                    ->icon('heroicon-o-globe-alt')
                     ->url(route('switch-locale', ['lang' => App::getLocale() === 'en' ? 'uk' : 'en']))
                     ->sort(100),
             ]);

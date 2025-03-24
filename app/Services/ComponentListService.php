@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Dto\ComponentAddDto;
 use App\Dto\GetComponentListDto;
 use App\Interfaces\ComponentListServiceInterface;
 use App\Models\Component;
@@ -19,5 +20,14 @@ final readonly class ComponentListService extends SearchQueryService implements 
         $this->applyWhere(query: $query, field: 'supplier_id', value: $dto->supplier_id);
 
         return $query->paginate(self::ITEMS_PER_PAGE);
+    }
+
+    public function createComponent(ComponentAddDto $dto): Component
+    {
+        return Component::create([
+            'name' => $dto->name,
+            'description' => $dto->description,
+            'supplier_id' => $dto->supplier_id,
+        ]);
     }
 }
