@@ -10,18 +10,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
 #[CoversClass(UserController::class)]
 final class UserControllerTest extends TestCase
 {
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->seed(UserSeeder::class);
-    }
-
     #[DataProvider('provideGetUserList')]
     public function testGetUserList($expectedStatus, $expectedResponse, $payload = []): void
     {
         $response = $this->makeCall(
-            "/api/user-list",
+            "/api/users",
             $payload,
         );
 
@@ -33,7 +26,7 @@ final class UserControllerTest extends TestCase
     public function testInvalidQuery($payload, $expectedStatus): void
     {
         $response = $this->makeCall(
-            "/api/user-list",
+            "/api/users",
             $payload,
         );
 
@@ -96,7 +89,7 @@ final class UserControllerTest extends TestCase
                     'user_id',
                     'name',
                     'email',
-                    'created',
+                    'created_at',
                 ]
             ],
             "errors",

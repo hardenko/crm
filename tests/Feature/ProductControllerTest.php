@@ -3,29 +3,17 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\Api\ProductController;
-use Database\Seeders\ClientSeeder;
-use Database\Seeders\ComponentSeeder;
-use Database\Seeders\ProductSeeder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 #[CoversClass(ProductController::class)]
 final class ProductControllerTest extends TestCase
 {
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->seed(ClientSeeder::class);
-        $this->seed(ComponentSeeder::class);
-        $this->seed(ProductSeeder::class);
-    }
-
     #[DataProvider('provideGetProductList')]
     public function testGetProductList($expectedStatus, $expectedResponse, $payload = []): void
     {
         $response = $this->makeCall(
-            "/api/product-list",
+            "/api/products",
             $payload,
         );
 
@@ -37,7 +25,7 @@ final class ProductControllerTest extends TestCase
     public function testInvalidQuery($payload, $expectedStatus): void
     {
         $response = $this->makeCall(
-            "/api/product-list",
+            "/api/products",
             $payload,
         );
 
@@ -108,7 +96,7 @@ final class ProductControllerTest extends TestCase
                             'description',
                             'supplier_id',
                             'quantity',
-                            'created'
+                            'created_at'
                         ]
                     ],
                     'created',

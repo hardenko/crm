@@ -6,6 +6,12 @@ use App\Interfaces\ClientListServiceInterface;
 use App\Interfaces\ComponentListServiceInterface;
 use App\Interfaces\ProductListServiceInterface;
 use App\Interfaces\UserListServiceInterface;
+use App\Models\Component;
+use App\Models\Order;
+use App\Models\StockMovement;
+use App\Observers\ComponentObserver;
+use App\Observers\OrderObserver;
+use App\Observers\StockMovementObserver;
 use App\Services\ClientListService;
 use App\Services\ComponentListService;
 use App\Services\ProductListService;
@@ -39,5 +45,9 @@ class AppServiceProvider extends ServiceProvider
         Route::aliasMiddleware('permission', PermissionMiddleware::class);
         Route::aliasMiddleware('role', RoleMiddleware::class);
         Route::aliasMiddleware('role_or_permission', RoleOrPermissionMiddleware::class);
+
+        Order::observe(OrderObserver::class);
+        Component::observe(ComponentObserver::class);
+        StockMovement::observe(StockMovementObserver::class);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\StockMovementType;
+use App\Enums\StockMovementTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->foreignId('supplier_id')->nullable()->constrained('clients')->nullOnDelete();
             $table->integer('quantity');
             $table->decimal('price', 10, 2)->nullable();
-            $table->enum('type', StockMovementType::values())->nullable();
+            $table->enum('type', StockMovementTypeEnum::values())->nullable();
             $table->text('comments')->nullable();
             $table->timestamps();
         });

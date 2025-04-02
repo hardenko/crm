@@ -7,7 +7,7 @@ use App\Interfaces\UserListServiceInterface;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-final readonly class UserListService extends SearchQueryService implements UserListServiceInterface
+final class UserListService extends SearchQueryService implements UserListServiceInterface
 {
     private const ITEMS_PER_PAGE = 20;
 

@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 final class ProductComponent extends Model
 {
-    protected $table = 'component_product';
     protected $guarded = ['id'];
 
     /**

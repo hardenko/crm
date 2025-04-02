@@ -44,7 +44,7 @@ class ProductResource extends Resource implements HasShieldPermissions
                     ->schema([
                         Repeater::make('components')
                             ->label(__('filament/resources/product.section_button'))
-                            ->relationship('components')
+                            ->relationship('productComponentsRelation')
                             ->schema([
                                 Select::make('component_id')
                                     ->label(__('filament/resources/product.section_fields.component_id.label'))

@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Enums\OrderStatusType;
-use App\Enums\PaymentStatusType;
+use App\Enums\OrderStatusTypeEnum;
+use App\Enums\PaymentStatusTypeEnum;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\Product;
@@ -24,8 +24,8 @@ class OrderFactory extends Factory
             'quantity' => 1,
             'payer_id' => $payer?->id,
             'receiver_id' => $receiver?->id,
-            'payment_status' => Arr::random(PaymentStatusType::cases())->value,
-            'order_status' => Arr::random(OrderStatusType::cases())->value,
+            'payment_status' => Arr::random(PaymentStatusTypeEnum::cases())->value,
+            'order_status' => Arr::random(OrderStatusTypeEnum::cases())->value,
             'comments' => $this->faker->sentence,
         ];
     }

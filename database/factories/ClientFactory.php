@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Enums\ClientLegalForm;
-use App\Enums\ClientType;
+use App\Enums\ClientLegalFormEnum;
+use App\Enums\ClientTypeEnum;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
@@ -17,8 +17,8 @@ class ClientFactory extends Factory
         return [
             'name' => $this->faker->company,
             'phone' => '+380' . $this->faker->numerify('#########'),
-            'client_type' => ClientType::Supplier->value,
-            'legal_form' => ClientLegalForm::LLC->value,
+            'client_type' => ClientTypeEnum::SUPPLIER->value,
+            'legal_form' => ClientLegalFormEnum::LLC->value,
         ];
     }
 
@@ -27,12 +27,12 @@ class ClientFactory extends Factory
         return $this->state(fn () =>[
             'name' => $this->faker->company,
             'phone' => '+380' . $this->faker->numerify('#########'),
-            'client_type' => ClientType::Payer->value,
+            'client_type' => ClientTypeEnum::PAYER->value,
             'legal_form' => Arr::random([
-                ClientLegalForm::PE,
-                ClientLegalForm::LLC,
-                ClientLegalForm::NGO,
-                ClientLegalForm::charitableFoundation,
+                ClientLegalFormEnum::PE,
+                ClientLegalFormEnum::LLC,
+                ClientLegalFormEnum::NGO,
+                ClientLegalFormEnum::CHARITABLE_FOUNDATION,
             ])->value,
         ]);
     }
@@ -42,8 +42,8 @@ class ClientFactory extends Factory
         return $this->state(fn () =>[
             'name' => $this->faker->name,
             'phone' => '+380' . $this->faker->numerify('#########'),
-            'client_type' => ClientType::Receiver->value,
-            'legal_form' => ClientLegalForm::Individual->value,
+            'client_type' => ClientTypeEnum::RECEIVER->value,
+            'legal_form' => ClientLegalFormEnum::INDIVIDUAL->value,
         ]);
     }
 }

@@ -13,7 +13,7 @@ final class ProductListResource extends JsonResource
             'name' => $this->name,
             'type' => $this->type,
             'price' => $this->price,
-            'components' => ComponentListResource::collection($this->whenLoaded('belongsToManyComponents')),
+            'components' => ComponentResource::collection($this->whenLoaded('componentsRelation')),
             'created' => $this->created_at->toDateTimeString(),
         ];
     }

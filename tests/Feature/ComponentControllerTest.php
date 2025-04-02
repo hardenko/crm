@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ClientType;
+use App\Enums\ClientLegalFormEnum;
+use App\Enums\ClientTypeEnum;
 use App\Http\Controllers\Api\ComponentController;
 use App\Models\Client;
+use App\Models\Component;
 use App\Models\User;
-use Database\Seeders\ClientSeeder;
-use Database\Seeders\ComponentSeeder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\Permission\Models\Permission;
@@ -21,12 +21,19 @@ final class ComponentControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(ClientSeeder::class);
-        $this->seed(ComponentSeeder::class);
+        $supplier = Client::factory()->create([
+            'name' => 'Test Supplier',
+            'phone' => '+380111111112',
+            'bank_account' => 'Test Bank Account',
+            'legal_form' => ClientLegalFormEnum::LLC->value,
+            'client_type' => ClientTypeEnum::SUPPLIER->value,
+        ]);
 
-        $supplier = Client::query()
-            ->where('client_type', ClientType::Supplier->value)
-            ->firstOrFail();
+        Component::factory()->create([
+            'name' => 'Test Component',
+            'description' => 'Test Description',
+            'supplier_id' => $supplier->id,
+        ]);
 
         $this->supplierId = $supplier->id;
     }
@@ -39,7 +46,7 @@ final class ComponentControllerTest extends TestCase
         }
 
         $response = $this->makeCall(
-            "/api/component-list",
+            "/api/components",
             $payload,
         );
 
@@ -51,7 +58,7 @@ final class ComponentControllerTest extends TestCase
     public function testInvalidQuery($payload, $expectedStatus): void
     {
         $response = $this->makeCall(
-            "/api/component-list",
+            "/api/components",
             $payload,
         );
 
@@ -71,7 +78,7 @@ final class ComponentControllerTest extends TestCase
         $user->givePermissionTo('add component');
 
         $response = $this->actingAs($user)->postJson(
-            '/api/component',
+            '/api/components',
             $payload
         );
 
@@ -155,7 +162,7 @@ final class ComponentControllerTest extends TestCase
                     'name',
                     'description',
                     'supplier_id',
-                    'created',
+                    'created_at',
                 ]
             ],
             "errors",

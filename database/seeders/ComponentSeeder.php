@@ -11,9 +11,5 @@ class ComponentSeeder extends Seeder
     public function run(): void
     {
         Component::factory(10)->create();
-        Component::factory()->create([
-                'name' => 'Test Component',
-            ]
-        );
     }
 }
