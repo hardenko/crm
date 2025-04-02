@@ -2,6 +2,7 @@
 
 namespace App\Http\Request;
 
+use App\Rules\IsSupplier;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class ComponentRequest extends FormRequest
@@ -21,7 +22,8 @@ final class ComponentRequest extends FormRequest
             'supplier_id' => [
                 'required',
                 'integer',
-                'exists:clients,id'
+                'exists:clients,id',
+                new IsSupplier(),
             ],
         ];
     }

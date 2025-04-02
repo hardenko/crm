@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\StockMovementType;
+use App\Enums\StockMovementTypeEnum;
 use App\Filament\Resources\StockMovementResource\Pages;
 use App\Models\Client;
 use App\Models\Component;
@@ -33,14 +33,14 @@ class StockMovementResource extends Resource implements HasShieldPermissions
                     ->schema([
                         Select::make('type')
                             ->label(__('filament/resources/stock_movement.fields.type.label'))
-                            ->options(StockMovementType::options())
+                            ->options(StockMovementTypeEnum::options())
                             ->required()
                             ->reactive()
                             ->afterStateUpdated(function ($set, $get, $state) {
-                                $type = StockMovementType::tryFrom((string)$state);
-                                $set('max_quantity', $type === StockMovementType::Outgoing ? Warehouse::where('component_id', $get('component_id'))->value('quantity') ?? 0 : null);
-                                $set('comments_required', $type === StockMovementType::Outgoing);
-                                $set('supplier_visible', $type === StockMovementType::Incoming);
+                                $type = StockMovementTypeEnum::tryFrom((string)$state);
+                                $set('max_quantity', $type === StockMovementTypeEnum::OUTGOING ? Warehouse::where('component_id', $get('component_id'))->value('quantity') ?? 0 : null);
+                                $set('comments_required', $type === StockMovementTypeEnum::OUTGOING);
+                                $set('supplier_visible', $type === StockMovementTypeEnum::INCOMING);
                             }),
                         Select::make('component_id')
                             ->label(__('filament/resources/stock_movement.fields.component_id.label'))
@@ -72,7 +72,7 @@ class StockMovementResource extends Resource implements HasShieldPermissions
                             ->numeric()
                             ->required()
                             ->minValue(1)
-                            ->maxValue(fn($get) => StockMovementType::tryFrom($get('type')) === StockMovementType::Outgoing ? $get('max_quantity') : null),
+                            ->maxValue(fn($get) => StockMovementTypeEnum::tryFrom($get('type')) === StockMovementTypeEnum::OUTGOING ? $get('max_quantity') : null),
                         TextInput::make('available_quantity')
                             ->label(__('filament/resources/stock_movement.fields.available_quantity.label'))
                             ->disabled()
@@ -82,14 +82,14 @@ class StockMovementResource extends Resource implements HasShieldPermissions
                             ->numeric()
                             ->nullable()
                             ->default(null)
-                            ->required(fn($get) => StockMovementType::tryFrom($get('type')) === StockMovementType::Incoming),
+                            ->required(fn($get) => StockMovementTypeEnum::tryFrom($get('type')) === StockMovementTypeEnum::INCOMING),
                     ])->columns(3),
                 Section::make('')
                     ->schema([
                         Textarea::make('comments')
                             ->label(__('filament/resources/stock_movement.fields.comments.label'))
                             ->nullable()
-                            ->required(fn($get) => StockMovementType::tryFrom($get('type')) === StockMovementType::Outgoing),
+                            ->required(fn($get) => StockMovementTypeEnum::tryFrom($get('type')) === StockMovementTypeEnum::OUTGOING),
                     ])->columnSpanFull(),
             ]);
     }
@@ -125,8 +125,8 @@ class StockMovementResource extends Resource implements HasShieldPermissions
                     ->badge()
                     ->formatStateUsing(fn($record) => $record->type->label())
                     ->color(fn($record): string => match ($record->type) {
-                        StockMovementType::Incoming => 'success',
-                        StockMovementType::Outgoing => 'yellow',
+                        StockMovementTypeEnum::INCOMING => 'success',
+                        StockMovementTypeEnum::OUTGOING => 'yellow',
                     })
                     ->sortable()
                     ->toggleable(),
@@ -139,10 +139,11 @@ class StockMovementResource extends Resource implements HasShieldPermissions
                     ->sortable()
                     ->toggleable(),
             ])
+            ->defaultSort('created_at', 'DESC')
             ->filters([
                 SelectFilter::make('type')
                     ->label(__('filament/resources/stock_movement.fields.type.label'))
-                    ->options(fn() => StockMovementType::options())
+                    ->options(fn() => StockMovementTypeEnum::options())
                     ->default(null),
             ]);
     }

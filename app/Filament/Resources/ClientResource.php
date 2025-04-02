@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\ClientLegalForm;
-use App\Enums\ClientType;
+use App\Enums\ClientLegalFormEnum;
+use App\Enums\ClientTypeEnum;
 use App\Models\Client;
 use App\Filament\Resources\ClientResource\Pages;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
@@ -44,11 +44,11 @@ class ClientResource extends Resource implements HasShieldPermissions
                     ->schema([
                         Select::make('client_type')
                             ->label(__('filament/resources/client.fields.type.label'))
-                            ->options(ClientType::options())
+                            ->options(ClientTypeEnum::options())
                             ->required(),
                         Select::make('legal_form')
                             ->label(__('filament/resources/client.fields.legal_form.label'))
-                            ->options(ClientLegalForm::options())
+                            ->options(ClientLegalFormEnum::options())
                             ->required(),
                     ])->columns(),
                 Section::make('')
@@ -98,9 +98,9 @@ class ClientResource extends Resource implements HasShieldPermissions
                     ->badge()
                     ->formatStateUsing(fn($record) => $record->client_type->label())
                     ->color(fn($record): string => match ($record->client_type) {
-                        ClientType::Payer => 'yellow',
-                        ClientType::Receiver => 'success',
-                        ClientType::Supplier => 'info',
+                        ClientTypeEnum::PAYER => 'yellow',
+                        ClientTypeEnum::RECEIVER => 'success',
+                        ClientTypeEnum::SUPPLIER => 'info',
                     })
                     ->toggleable(),
                 TextColumn::make('bank_account')
@@ -120,7 +120,7 @@ class ClientResource extends Resource implements HasShieldPermissions
             ->filters([
                 SelectFilter::make('client_type')
                     ->label(__('filament/resources/client.fields.type.label'))
-                    ->options(ClientType::options()),
+                    ->options(ClientTypeEnum::options()),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

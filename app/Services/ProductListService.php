@@ -7,13 +7,13 @@ use App\Interfaces\ProductListServiceInterface;
 use App\Models\Product;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-final readonly class ProductListService extends SearchQueryService implements ProductListServiceInterface
+final class ProductListService extends SearchQueryService implements ProductListServiceInterface
 {
     private const ITEMS_PER_PAGE = 20;
 
     public function getProductList(GetProductListDto $dto): LengthAwarePaginator
     {
-        $query = Product::query()->with(['belongsToManyComponents']);
+        $query = Product::query()->with(['componentsRelation']);
 
         $this->applyWhere(query: $query, field: 'name', value: $dto->name, operator: 'LIKE', wildcard: true);
         $this->applyWhere(query: $query, field: 'price', value: $dto->price);

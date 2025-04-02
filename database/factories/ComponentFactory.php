@@ -14,7 +14,7 @@ class ComponentFactory extends Factory
         return [
             'name' => $this->faker->word(),
             'description' => $this->faker->sentence(),
-            'supplier_id' => Client::where('client_type', 'supplier')->inRandomOrder()->first()?->id,
+            'supplier_id' => Client::factory(),
         ];
     }
 }

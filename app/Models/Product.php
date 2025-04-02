@@ -11,17 +11,15 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $table = 'products';
     protected $guarded = ['id'];
 
-
-    public function belongsToManyComponents(): BelongsToMany
+    public function componentsRelation(): BelongsToMany
     {
-        return $this->belongsToMany(Component::class, 'component_product', 'product_id', 'component_id')
+        return $this->belongsToMany(Component::class, 'product_components', 'product_id', 'component_id')
             ->withPivot('quantity')
             ->withTimestamps();
     }
-    public function components(): HasMany
+    public function productComponentsRelation(): HasMany
     {
         return $this->hasMany(ProductComponent::class, 'product_id', 'id');
     }

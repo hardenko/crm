@@ -7,7 +7,7 @@ use App\Interfaces\ClientListServiceInterface;
 use App\Models\Client;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-final readonly class ClientListService extends SearchQueryService implements ClientListServiceInterface
+final class ClientListService extends SearchQueryService implements ClientListServiceInterface
 {
     private const ITEMS_PER_PAGE = 20;
 

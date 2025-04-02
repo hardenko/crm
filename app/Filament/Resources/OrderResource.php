@@ -2,15 +2,14 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\OrderStatusType;
-use App\Enums\PaymentStatusType;
+use App\Enums\OrderStatusTypeEnum;
+use App\Enums\PaymentStatusTypeEnum;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Warehouse;
+use App\Rules\ValidateStock;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -44,8 +43,7 @@ class OrderResource extends Resource implements HasShieldPermissions
                             ->searchable()
                             ->required()
                             ->live()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('total_price', Product::find($state)?->price ?? 0)
-                            ),
+                            ->afterStateUpdated(fn($state, callable $set) => $set('total_price', Product::find($state)?->price ?? 0)),
                         TextInput::make('quantity')
                             ->label(__('filament/resources/order.fields.quantity.label'))
                             ->numeric()
@@ -53,27 +51,16 @@ class OrderResource extends Resource implements HasShieldPermissions
                             ->minValue(1)
                             ->required()
                             ->reactive()
-                            ->afterStateUpdated(fn($state, callable $set, callable $get) => $set('total_price', $state * (Product::find($get('product_id'))?->price ?? 0))
-                            )
+                            ->afterStateUpdated(fn($state, callable $set, callable $get) => $set('total_price', $state * (Product::find($get('product_id'))?->price ?? 0)))
                             ->rule(function (callable $get) {
-                                return function (string $attribute, $value, Closure $fail) use ($get) {
-                                    $product = Product::with('belongsToManyComponents')->find($get('product_id'));
-                                    if (!$product) return;
-
-                                    foreach ($product->belongsToManyComponents as $component) {
-                                        $neededQuantity = $component->pivot->quantity * $value;
-                                        $warehouseItem = Warehouse::where('component_id', $component->id)->first();
-
-                                        if (!$warehouseItem || $warehouseItem->quantity < $neededQuantity) {
-                                            $fail("Not enough stock for component: {$component->name}. Required: {$neededQuantity}, Available: " . ($warehouseItem->quantity ?? 0));
-                                        }
-                                    }
-                                };
+                                return $get('product_id')
+                                    ? new ValidateStock($get('product_id'))
+                                    : null;
                             }),
                         Select::make('order_status')
                             ->label(__('filament/resources/order.fields.order_status.label'))
-                            ->options(OrderStatusType::options())
-                            ->default(OrderStatusType::Pending)
+                            ->options(OrderStatusTypeEnum::options())
+                            ->default(OrderStatusTypeEnum::PENDING)
                             ->required(),
                     ])->columns(3),
                 Section::make(__('filament/resources/order.section_name.payment_details'))
@@ -81,11 +68,12 @@ class OrderResource extends Resource implements HasShieldPermissions
                         TextInput::make('total_price')
                             ->label(__('filament/resources/order.fields.total_price.label'))
                             ->disabled()
+                            ->dehydrated(false)
                             ->required(),
                         Select::make('payment_status')
                             ->label(__('filament/resources/order.fields.payment_status.label'))
-                            ->options(PaymentStatusType::options())
-                            ->default(PaymentStatusType::Pending)
+                            ->options(PaymentStatusTypeEnum::options())
+                            ->default(PaymentStatusTypeEnum::PENDING)
                             ->required(),
                         Select::make('payer_id')
                             ->label(__('filament/resources/order.fields.payer_id.label'))
@@ -131,11 +119,11 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ->badge()
                     ->formatStateUsing(fn($record) => $record->order_status->label())
                     ->color(fn($record): string => match ($record->order_status) {
-                        OrderStatusType::Pending => 'yellow',
-                        OrderStatusType::Processing => 'violet',
-                        OrderStatusType::Shipped => 'success',
-                        OrderStatusType::Delivered => 'success',
-                        OrderStatusType::Cancelled => 'danger',
+                        OrderStatusTypeEnum::PENDING => 'yellow',
+                        OrderStatusTypeEnum::PROCESSING => 'violet',
+                        OrderStatusTypeEnum::SHIPPED => 'success',
+                        OrderStatusTypeEnum::DELIVERED => 'success',
+                        OrderStatusTypeEnum::CANCELLED => 'danger',
                     })
                     ->sortable()
                     ->toggleable(),
@@ -158,9 +146,9 @@ class OrderResource extends Resource implements HasShieldPermissions
                     ->badge()
                     ->formatStateUsing(fn($record) => $record->payment_status->label())
                     ->color(fn($record): string => match ($record->payment_status) {
-                        PaymentStatusType::Pending => 'yellow',
-                        PaymentStatusType::Completed => 'success',
-                        PaymentStatusType::Failed => 'danger',
+                        PaymentStatusTypeEnum::PENDING => 'yellow',
+                        PaymentStatusTypeEnum::COMPLETED => 'success',
+                        PaymentStatusTypeEnum::FAILED => 'danger',
                     })
                     ->sortable()
                     ->toggleable(),
@@ -177,7 +165,7 @@ class OrderResource extends Resource implements HasShieldPermissions
             ->filters([
                 SelectFilter::make('order_status')
                     ->label(__('filament/resources/order.fields.order_status.label'))
-                    ->options(fn() => OrderStatusType::options())
+                    ->options(fn() => OrderStatusTypeEnum::options())
                     ->default(null),
             ])
             ->recordAction('view')
@@ -205,11 +193,11 @@ class OrderResource extends Resource implements HasShieldPermissions
                             ->badge()
                             ->formatStateUsing(fn($record) => $record->order_status->label())
                             ->color(fn($record): string => match ($record->order_status) {
-                                OrderStatusType::Pending => 'yellow',
-                                OrderStatusType::Processing => 'success',
-                                OrderStatusType::Shipped => 'zinc',
-                                OrderStatusType::Delivered => 'sky',
-                                OrderStatusType::Cancelled => 'danger',
+                                OrderStatusTypeEnum::PENDING => 'yellow',
+                                OrderStatusTypeEnum::PROCESSING => 'success',
+                                OrderStatusTypeEnum::SHIPPED => 'zinc',
+                                OrderStatusTypeEnum::DELIVERED => 'sky',
+                                OrderStatusTypeEnum::CANCELLED => 'danger',
                             }),
                         TextEntry::make('product.name')
                             ->label(__('filament/resources/order.fields.product_id.label')),
@@ -241,16 +229,16 @@ class OrderResource extends Resource implements HasShieldPermissions
                             ->badge()
                             ->formatStateUsing(fn($record) => $record->payment_status->label())
                             ->color(fn($record): string => match ($record->payment_status) {
-                                PaymentStatusType::Pending => 'yellow',
-                                PaymentStatusType::Completed => 'success',
-                                PaymentStatusType::Failed => 'danger',
+                                PaymentStatusTypeEnum::PENDING => 'yellow',
+                                PaymentStatusTypeEnum::COMPLETED => 'success',
+                                PaymentStatusTypeEnum::FAILED => 'danger',
                             }),
                         TextEntry::make('receiver.name')
                             ->label(__('filament/resources/order.fields.receiver_id.label')),
                     ])->columns(),
                 InfolistSection::make(__('filament/resources/order.infolist.section_name.component_list'))
                     ->schema([
-                        RepeatableEntry::make('product.components')
+                        RepeatableEntry::make('product.productComponentsRelation')
                             ->label('')
                             ->schema([
                                 TextEntry::make('components.name')
@@ -291,23 +279,6 @@ class OrderResource extends Resource implements HasShieldPermissions
         return __('filament/resources/order.navigation_label');
     }
 
-    public static function mutateFormDataBeforeCreate(array $data): array
-    {
-        return self::calculateTotalPrice($data);
-    }
-
-    public static function mutateFormDataBeforeSave(array $data): array
-    {
-        return self::calculateTotalPrice($data);
-    }
-
-    private static function calculateTotalPrice(array $data): array
-    {
-        $product = Product::find($data['product_id'] ?? null);
-        $data['total_price'] = ($data['quantity'] ?? 1) * ($product?->price ?? 0);
-        return $data;
-    }
-
     public static function canViewAny(): bool
     {
         return auth()->user()->can('view_any_order');
@@ -327,6 +298,7 @@ class OrderResource extends Resource implements HasShieldPermissions
     {
         return auth()->user()->can('delete_order');
     }
+
     public static function canDeleteAny(): bool
     {
         return auth()->user()->can('delete_any_order');

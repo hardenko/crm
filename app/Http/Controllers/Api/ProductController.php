@@ -9,17 +9,14 @@ use App\Interfaces\ProductListServiceInterface;
 use App\Resources\ProductListResource;
 use Illuminate\Http\JsonResponse;
 
-class ProductController extends BaseApiController
+final class ProductController extends BaseApiController
 {
-    public function __construct(private readonly ProductListServiceInterface $service)
-    {
-
-    }
+    public function __construct(private readonly ProductListServiceInterface $service){}
 
     public function getProductList(ProductListRequest $request): JsonResponse
     {
         $response = $this->service->getProductList(GetProductListDto::fromArray($request->all()));
 
-        return $this->response('successfully_got_product_list', ProductListResource::collection($response));
+        return $this->response('Here is your products list', ProductListResource::collection($response));
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Request;
 
-use App\Enums\ClientLegalForm;
-use App\Enums\ClientType;
+use App\Enums\ClientLegalFormEnum;
+use App\Enums\ClientTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,7 +24,7 @@ final class ClientListRequest extends FormRequest
             'legal_form' => [
                 'bail',
                 'string',
-                Rule::enum(ClientLegalForm::class),
+                Rule::enum(ClientLegalFormEnum::class),
             ],
             'bank_account' => [
                 'bail',
@@ -34,7 +34,7 @@ final class ClientListRequest extends FormRequest
             'client_type' => [
                 'bail',
                 'string',
-                Rule::enum(ClientType::class),
+                Rule::enum(ClientTypeEnum::class),
             ]
         ];
     }

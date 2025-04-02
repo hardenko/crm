@@ -11,10 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 class UserController extends BaseApiController
 {
-    public function __construct(private readonly UserListServiceInterface $service)
-    {
-
-    }
+    public function __construct(private readonly UserListServiceInterface $service) {}
 
     public function getUserList(UserListRequest $request): JsonResponse
     {

@@ -2,27 +2,29 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ClientLegalForm;
-use App\Enums\ClientType;
+use App\Enums\ClientLegalFormEnum;
+use App\Enums\ClientTypeEnum;
 use App\Http\Controllers\Api\ClientController;
-use Database\Seeders\ClientSeeder;
+use App\Models\Client;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 #[CoversClass(ClientController::class)]
 final class ClientControllerTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->seed(ClientSeeder::class);
-    }
-
     #[DataProvider('provideGetClientList')]
     public function testGetClientList($expectedStatus, $expectedResponse, $payload = []): void
     {
+        Client::factory()->create([
+            'name' => 'Test Client',
+            'phone' => '+380111111111',
+            'bank_account' => 'Test Bank Account',
+            'legal_form' => ClientLegalFormEnum::LLC->value,
+            'client_type' => ClientTypeEnum::PAYER->value,
+        ]);
+
         $response = $this->makeCall(
-            "/api/client-list",
+            "/api/clients",
             $payload,
         );
 
@@ -34,7 +36,7 @@ final class ClientControllerTest extends TestCase
     public function testInvalidQuery($payload, $expectedStatus): void
     {
         $response = $this->makeCall(
-            "/api/client-list",
+            "/api/clients",
             $payload,
         );
 
@@ -62,7 +64,7 @@ final class ClientControllerTest extends TestCase
                 'expectedStatus' => 200,
                 'expectedResponse' => self::successResponse(),
                 'payload' => [
-                    'legal_form' => ClientLegalForm::LLC->value,
+                    'legal_form' => ClientLegalFormEnum::LLC->value,
                 ],
             ],
             'get client list status 200 with bank account filters' => [
@@ -76,7 +78,7 @@ final class ClientControllerTest extends TestCase
                 'expectedStatus' => 200,
                 'expectedResponse' => self::successResponse(),
                 'payload' => [
-                    'client_type' => ClientType::Payer->value,
+                    'client_type' => ClientTypeEnum::PAYER->value,
                 ],
             ],
         ];

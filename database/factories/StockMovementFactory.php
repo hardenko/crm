@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\StockMovementType;
+use App\Enums\StockMovementTypeEnum;
 use App\Models\Component;
 use App\Models\StockMovement;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -19,7 +19,7 @@ class StockMovementFactory extends Factory
             'supplier_id' => $component ? $component->supplier_id : null,
             'quantity' => 50,
             'price' => $this->faker->numberBetween(1,10000),
-            'type' => StockMovementType::Incoming->value,
+            'type' => StockMovementTypeEnum::INCOMING->value,
             'comments' => $this->faker->sentence(),
         ];
     }
